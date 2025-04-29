@@ -26,16 +26,12 @@ const Navbar = () => {
             <Link
               key={link.name}
               href={link.href}
-              className="text-white font-bold relative group uppercase"
+              className="text-white  font-bold relative group uppercase flex flex-col items-center justify-center gap-1"
             >
               <span className="py-2">{link.name}</span>
               <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-white transition-all duration-300 group-hover:w-full"></span>
             </Link>
           ))}
-          {/* <Link href="#home" className="text-white font-bold relative group">
-            <span className="py-2">HOME</span>
-            <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-white transition-all duration-300 group-hover:w-full"></span>
-          </Link> */}
         </nav>
       </div>
     </div>
