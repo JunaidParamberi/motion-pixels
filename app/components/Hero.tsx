@@ -4,7 +4,7 @@ import coverImg from "../Assets/Images/Home/Cover_1.jpg";
 
 const Hero = () => {
   return (
-    <div className="relative h-full w-full">
+    <div className="relative h-screen w-full">
       <Image
         src={coverImg}
         alt="Cover Image"
@@ -16,7 +16,7 @@ const Hero = () => {
         <h1 className="text-white text-left text-7xl font-extrabold uppercase z-20">
           Immersive Design <br /> for the Future
         </h1>
-        <button className="z-20 border-2 border-white text-white px-6 py-2 uppercase font-semibold hover:bg-white hover:text-black transition">
+        <button className="z-20 border-[0.5] cursor-pointer border-white text-white px-6 py-2 uppercase font-semibold hover:bg-white hover:text-black transition">
           Explore Work
         </button>
       </div>

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "./components/Navbar";
+import SmoothScroll from "./components/SmoothScroll";
+import Drag from "./components/MouseFollower";
 
 export const metadata: Metadata = {
   title: "Motion Pixels",
@@ -23,7 +25,11 @@ export default function RootLayout({
         <nav className="w-full">
           <Navbar />
         </nav>
-        {children}
+        <main>
+          {" "}
+          <SmoothScroll /> {children}
+          <Drag />
+        </main>
       </body>
     </html>
   );
