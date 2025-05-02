@@ -35,20 +35,21 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
-  useEffect(() => {
-    if (isMobileMenuOpen && hamburgerRef.current) {
-      const rect = hamburgerRef.current.getBoundingClientRect();
-      setClipOrigin({
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2,
-      });
-    }
-  }, [isMobileMenuOpen]);
-
   const links = [
     { name: "About", href: "/about-us" },
     { name: "Contact", href: "/contact" },
   ];
+
+  const handleHamburgerClick = () => {
+    if (hamburgerRef.current) {
+      const rect = hamburgerRef.current.getBoundingClientRect();
+      setClipOrigin({
+        x: rect.left + rect.width / 2, // Center of the hamburger button
+        y: rect.top + rect.height / 2, // Center of the hamburger button
+      });
+    }
+    setIsMobileMenuOpen((prev) => !prev);
+  };
 
   return (
     <div
@@ -66,7 +67,7 @@ const Navbar = () => {
         <button
           ref={hamburgerRef}
           className="md:hidden text-white focus:outline-none z-50"
-          onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+          onClick={handleHamburgerClick}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -113,14 +114,14 @@ const Navbar = () => {
           <motion.div
             className="fixed inset-0 bg-black text-white h-screen w-screen flex flex-col items-center justify-center space-y-8 z-40"
             initial={{
-              clipPath: `circle(0% at ${clipOrigin.x}px ${clipOrigin.y}px)`,
+              clipPath: `circle(0% at ${clipOrigin.x}px ${clipOrigin.y}px)`, // Start from hamburger button
             }}
             animate={{
-              clipPath: `circle(150% at ${clipOrigin.x}px ${clipOrigin.y}px)`,
+              clipPath: `circle(150% at ${clipOrigin.x}px ${clipOrigin.y}px)`, // Expand from the button
               transition: { duration: 0.6, ease: "easeInOut" },
             }}
             exit={{
-              clipPath: `circle(0% at ${clipOrigin.x}px ${clipOrigin.y}px)`,
+              clipPath: `circle(0% at ${clipOrigin.x}px ${clipOrigin.y}px)`, // Contract back to button
               transition: { duration: 0.4, ease: "easeInOut" },
             }}
           >
