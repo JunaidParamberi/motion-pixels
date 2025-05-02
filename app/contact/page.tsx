@@ -26,7 +26,7 @@ const Page = () => {
       formDataToSend.append("email", formData.email);
       formDataToSend.append("message", formData.message);
 
-      const response = await fetch("https://formspree.io/f/mnndpvje", {
+      const response = await fetch("https://formspree.io/f/xanoejon", {
         method: "POST",
         headers: {
           Accept: "application/json", // optional, helps get JSON response
