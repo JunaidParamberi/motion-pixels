@@ -10,7 +10,7 @@ export default function MouseFollower() {
   return (
     <motion.div
       ref={ref}
-      className="fixed top-0 left-0 w-16 h-16 bg-transparent border cursor-pointer rounded-full shadow-lg pointer-events-none z-50"
+      className="fixed max-md:hidden top-0 left-0 w-16 h-16 bg-transparent border cursor-pointer rounded-full shadow-lg pointer-events-none z-50"
       style={{ x, y }}
     />
   );

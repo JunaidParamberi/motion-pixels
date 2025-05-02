@@ -29,7 +29,7 @@ const Page = () => {
       const response = await fetch("https://formspree.io/f/xanoejon", {
         method: "POST",
         headers: {
-          Accept: "application/json", // optional, helps get JSON response
+          Accept: "application/json",
         },
         body: formDataToSend,
       });
@@ -72,16 +72,16 @@ const Page = () => {
 
       {/* Main Content */}
       <div className="flex flex-col items-center text-center gap-8 w-full">
-        <h1 className="text-white text-6xl font-extrabold leading-tight">
+        <h1 className="text-white text-4xl md:text-6xl font-extrabold leading-tight">
           Get in Touch
         </h1>
 
-        <p className="max-w-3xl text-lg text-gray-300 leading-relaxed">
+        <p className="max-w-3xl text-base md:text-lg text-gray-300 leading-relaxed">
           We’re here to help you bring your ideas to life. <br /> Let’s start a
           conversation and explore how we can work together.
         </p>
 
-        <div className="flex justify-between w-2xl py-7 flex-wrap gap-6">
+        <div className="flex flex-col md:flex-row justify-between w-full md:w-2xl py-7 flex-wrap gap-6">
           <span className="flex items-center gap-3">
             <IoIosCall className="text-2xl text-white w-10 h-10" />
             <div className="flex flex-col items-start">
@@ -111,7 +111,7 @@ const Page = () => {
 
         {/* Contact Form */}
         <form
-          className="flex flex-col gap-4 max-w-2xl w-full"
+          className="flex flex-col gap-4 max-w-full md:max-w-2xl w-full"
           onSubmit={handleSubmit}
         >
           <input

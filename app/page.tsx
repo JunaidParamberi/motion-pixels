@@ -1,3 +1,4 @@
+import HamburgerModal from "./components/HamburgerModal";
 import Hero from "./components/Hero";
 
 export default function Home() {
