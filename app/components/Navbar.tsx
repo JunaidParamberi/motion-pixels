@@ -42,7 +42,7 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-4 py-6 flex justify-between items-center">
         {/* Logo */}
-        <Link href="/" className="flex items-center">
+        <Link href="/" className="flex items-center cursor-pointer">
           <Image src={Logo} alt="Logo" width={250} height={40} />
         </Link>
 
