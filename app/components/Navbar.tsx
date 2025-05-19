@@ -37,6 +37,7 @@ const Navbar = () => {
 
   const links = [
     { name: "About", href: "/about-us" },
+    { name: "What We Do", href: "/services" },
     { name: "Contact", href: "/contact" },
   ];
 
@@ -53,7 +54,7 @@ const Navbar = () => {
 
   return (
     <div
-      className={`fixed z-50 top-0 left-0 w-full bg-gradient-to-b from-[#000000c9] to-transparent bg-opacity-50 transition-transform duration-300 ${
+      className={`fixed z-50 top-0 left-0 w-full bg-gradient-to-b from-[#000000c9] to-transparent bg-opacity-80 transition-transform duration-300 ${
         showNavbar ? "translate-y-0" : "-translate-y-full"
       } `}
     >
@@ -90,19 +91,29 @@ const Navbar = () => {
         </button>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex md:space-x-16">
+        <nav className="hidden md:flex md:space-x-16 items-center">
           {links.map((link) => (
             <Link
               key={link.name}
               href={link.href}
-              className={`font-bold text-sm relative group uppercase text-white`}
+              className={`font-bold text-sm relative group uppercase  ${
+                link.name === "Contact"
+                  ? `border border-white px-4 py-2 hover:bg-white hover:text-black transition-all duration-300${
+                      pathName === "/contact"
+                        ? " bg-white text-black"
+                        : " text-white"
+                    }`
+                  : `text-white`
+              }`}
             >
               <span>{link.name}</span>
-              <span
-                className={`absolute left-0 bottom-0 h-[2px] bg-white transition-all duration-300 ${
-                  pathName === link.href ? "w-full" : "w-0 group-hover:w-full"
-                }`}
-              ></span>
+              {link.name !== "Contact" && (
+                <span
+                  className={`absolute left-0 bottom-0 top-6 h-[2px] bg-white transition-all duration-300 ${
+                    pathName === link.href ? "w-full" : "w-0 group-hover:w-full"
+                  }`}
+                ></span>
+              )}
             </Link>
           ))}
         </nav>
