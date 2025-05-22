@@ -39,7 +39,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
   return (
     <div
-      className="w-full flex flex-col justify-end items-center h-[200px] relative overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer"
+      className="w-full flex flex-col justify-end items-center h-[200px] max-md:h-[250px] relative overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -64,8 +64,8 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
           />
         )}
       </div>
-      <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-r from-[#05003bba] via-55% via-transparent to-transparent"></div>
-      <h1 className="text-5xl absolute font-bold z-20 w-full top-[40%] left-[10%] text-white">
+      <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-r from-[#05003bba] via-55% max-md:via-70% via-[#00000087] to-transparent"></div>
+      <h1 className="text-5xl max-md:text-4xl absolute font-bold z-20 w-full top-[40%] left-[10%] text-white">
         {title || "Service Title"}
       </h1>
     </div>
