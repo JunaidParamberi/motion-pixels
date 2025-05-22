@@ -4,24 +4,29 @@ import { title } from "process";
 import Image from "next/image";
 
 import sampleImage from "../Assets/Images/services/Screenshot 2025-05-19 at 12.54.53 AM.png";
+import experianceImg from "../Assets/Images/services/Experiance_img.jpg";
+import vfxImg from "../Assets/Images/services/VFX_img.jpg";
+import architactureImg from "../Assets/Images/services/Architectural_Img.jpg";
+
 import ParticlesBackground from "../components/ParticlesBackground";
 
 const ServicePage = () => {
   const services = [
     {
-      image: sampleImage,
+      // videoSrc: "/video/irefly-experience.mp4",
+      image: experianceImg,
       title: "Experience",
       alt: "Experience",
       link: "/services/service1",
     },
     {
-      image: sampleImage,
+      image: vfxImg,
       title: "VFX",
       alt: "VFX",
       link: "/services/service1",
     },
     {
-      image: sampleImage,
+      image: architactureImg,
       title: "Architectural",
       alt: "Architectural",
       link: "/services/service1",
@@ -30,14 +35,23 @@ const ServicePage = () => {
   return (
     <div className="w-full flex flex-col items-center justify-center min-h-screen gap-8 py-36 container mx-auto px-4">
       <ParticlesBackground />
-      <Image
+      {/* <Image
         src={sampleImage}
         alt="Background Image"
         className="fixed inset-0 object-cover w-full h-full -z-20 "
         priority
+      /> */}
+      <video
+        autoPlay
+        src="/video/irefly-experience.mp4"
+        className="fixed inset-0 object-cover w-full h-full -z-20 transition-opacity duration-1000"
+        muted
+        loop
+        playsInline
+        style={{ opacity: 0.7 }}
       />
       {/* Black Overlay */}
-      <div className="fixed inset-0 bg-black opacity-70 -z-10" />
+      <div className="fixed inset-0 bg-black opacity-60 -z-10" />
       <h1 className="text-white text-4xl md:text-6xl font-extrabold text-left w-full leading-tight">
         What We Do
       </h1>
