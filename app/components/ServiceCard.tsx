@@ -67,12 +67,14 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         )}
       </div>
       <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-r from-[#05003bba] via-35% via-[#04012a64] max-md:via-70% max-md:via-[#00000087]  to-transparent"></div>
-      <h1 className="text-5xl max-md:text-4xl absolute font-bold z-20 w-full top-[40%] left-[10%] text-white">
-        {title || "Service Title"}
-      </h1>
-      <h2 className=" w-full text-lg font-medium  top-[68%] max-md:top-[60%] left-[10%] text-white absolute z-20">
-        {subText || "Service Subtitle"}
-      </h2>
+      <div className="absolute inset-0 z-20 flex flex-col items-start justify-center p-4 px-10">
+        <h1 className="text-4xl max-md:text-3xl font-bold  w-full top-[40%]  text-white pb-3">
+          {title || "Service Title"}
+        </h1>
+        <h2 className=" w-full text-lg font-medium  text-white  ">
+          {subText || "Service Subtitle"}
+        </h2>
+      </div>
     </div>
   );
 };
