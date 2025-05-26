@@ -1,0 +1,9 @@
+/* Webfont: Neusharp-ExtraLight */@font-face {
+    font-family: 'NeusharpExtLt';
+    src: url('Neusharp-ExtraLight.woff2') format('woff2'), /* Modern Browsers */
+         url('Neusharp-ExtraLight.otf') format('opentype'); /* Safari, Android, iOS */
+             font-style: normal;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}
+

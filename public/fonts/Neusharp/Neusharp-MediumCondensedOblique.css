@@ -1,0 +1,9 @@
+/* Webfont: Neusharp-MedCondObliq */@font-face {
+    font-family: 'NeusharpMedCond';
+    src: url('Neusharp-MediumCondensedOblique.woff2') format('woff2'), /* Modern Browsers */
+         url('Neusharp-MediumCondensedOblique.otf') format('opentype'); /* Safari, Android, iOS */
+             font-style: italic;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}
+

@@ -8,6 +8,7 @@ interface ServiceCardProps {
   title: string;
   alt?: string;
   link?: string;
+  subText?: string; // Optional prop for subtitle
   videoSrc?: string; // Add this prop for video
 }
 
@@ -17,6 +18,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   alt,
   link,
   videoSrc,
+  subText,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -64,10 +66,13 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
           />
         )}
       </div>
-      <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-r from-[#05003bba] via-55% max-md:via-70% via-[#00000087] to-transparent"></div>
+      <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-r from-[#05003bba] via-35% via-[#04012a64] max-md:via-70% max-md:via-[#00000087]  to-transparent"></div>
       <h1 className="text-5xl max-md:text-4xl absolute font-bold z-20 w-full top-[40%] left-[10%] text-white">
         {title || "Service Title"}
       </h1>
+      <h2 className=" w-full text-lg font-medium  top-[68%] max-md:top-[60%] left-[10%] text-white absolute z-20">
+        {subText || "Service Subtitle"}
+      </h2>
     </div>
   );
 };

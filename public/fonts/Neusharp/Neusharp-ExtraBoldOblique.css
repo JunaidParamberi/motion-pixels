@@ -1,0 +1,9 @@
+/* Webfont: Neusharp-ExtraBoldOblique */@font-face {
+    font-family: 'NeusharpExtBd';
+    src: url('Neusharp-ExtraBoldOblique.woff2') format('woff2'), /* Modern Browsers */
+         url('Neusharp-ExtraBoldOblique.otf') format('opentype'); /* Safari, Android, iOS */
+             font-style: italic;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}
+

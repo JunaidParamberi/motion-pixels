@@ -1,0 +1,9 @@
+/* Webfont: Neusharp-Oblique */@font-face {
+    font-family: 'Neusharp';
+    src: url('Neusharp-Oblique.woff2') format('woff2'), /* Modern Browsers */
+         url('Neusharp-Oblique.otf') format('opentype'); /* Safari, Android, iOS */
+             font-style: italic;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}
+

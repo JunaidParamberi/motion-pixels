@@ -1,10 +1,11 @@
 import React from "react";
 import Image from "next/image";
 import coverImg from "../Assets/Images/Home/Cover_1.jpg";
+import "@/public/fonts/Neusharp/Neusharp-Black.css";
 
 const Hero = () => {
   return (
-    <div className="relative h-screen w-full">
+    <div className="relative h-screen w-full  hero">
       <Image
         src={coverImg}
         alt="Cover Image"

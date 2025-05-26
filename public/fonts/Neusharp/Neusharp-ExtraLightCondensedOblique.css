@@ -1,0 +1,9 @@
+/* Webfont: Neusharp-ExtLtCondObliq */@font-face {
+    font-family: 'NeusharpExtLtCond';
+    src: url('Neusharp-ExtraLightCondensedOblique.woff2') format('woff2'), /* Modern Browsers */
+         url('Neusharp-ExtraLightCondensedOblique.otf') format('opentype'); /* Safari, Android, iOS */
+             font-style: italic;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}
+

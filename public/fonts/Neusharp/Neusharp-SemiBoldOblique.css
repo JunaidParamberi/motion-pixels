@@ -1,0 +1,9 @@
+/* Webfont: Neusharp-SemiBoldOblique */@font-face {
+    font-family: 'NeusharpSemBd';
+    src: url('Neusharp-SemiBoldOblique.woff2') format('woff2'), /* Modern Browsers */
+         url('Neusharp-SemiBoldOblique.otf') format('opentype'); /* Safari, Android, iOS */
+             font-style: italic;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}
+

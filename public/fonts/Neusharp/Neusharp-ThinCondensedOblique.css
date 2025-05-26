@@ -1,0 +1,9 @@
+/* Webfont: Neusharp-ThinCondensedOblique */@font-face {
+    font-family: 'NeusharpThinCond';
+    src: url('Neusharp-ThinCondensedOblique.woff2') format('woff2'), /* Modern Browsers */
+         url('Neusharp-ThinCondensedOblique.otf') format('opentype'); /* Safari, Android, iOS */
+             font-style: italic;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}
+

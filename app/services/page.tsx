@@ -9,31 +9,35 @@ import vfxImg from "../Assets/Images/services/VFX_img.jpg";
 import architactureImg from "../Assets/Images/services/Architectural_Img.jpg";
 
 import ParticlesBackground from "../components/ParticlesBackground";
+import { s } from "motion/react-client";
 
 const ServicePage = () => {
   const services = [
     {
-      // videoSrc: "/video/irefly-experience.mp4",
       image: experianceImg,
-      title: "Experience",
+      title: "Custom Experiences",
       alt: "Experience",
       link: "/services/service1",
+      subText: "Immersive and interactive experiences tailored to your vision.",
     },
     {
       image: vfxImg,
-      title: "VFX",
+      title: "VFX Production",
       alt: "VFX",
       link: "/services/service1",
+      subText: "High-quality visual effects that bring your ideas to life.",
     },
     {
       image: architactureImg,
-      title: "Architectural",
+      title: "Architectural Visualization",
       alt: "Architectural",
       link: "/services/service1",
+      subText: "Stunning 3D renders and visuals for architectural projects.",
     },
   ];
+
   return (
-    <div className="w-full flex flex-col items-center justify-center min-h-screen gap-8 py-36 container mx-auto px-4">
+    <div className="w-full flex flex-col items-center justify-center min-h-screen gap-8 py-30 container mx-auto px-4">
       <ParticlesBackground />
       {/* <Image
         src={sampleImage}
@@ -65,6 +69,7 @@ const ServicePage = () => {
             title={service.title}
             alt={service.alt}
             link={service.link}
+            subText={service.subText}
           />
         ))}
       </div>

@@ -1,0 +1,15 @@
+/* Webfont: Neusharp-Black */@font-face {
+    font-family: 'NeusharpBlack';
+    src: url('Neusharp-Black.woff2') format('woff2'), /* Modern Browsers */
+         url('Neusharp-Black.otf') format('opentype'); /* Safari, Android, iOS */
+             font-style: normal;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}
+
+.hero {
+    font-family: 'NeusharpBlack', sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    text-rendering: optimizeLegibility;
+}
