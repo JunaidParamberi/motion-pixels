@@ -3,6 +3,9 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 import SmoothScroll from "./components/SmoothScroll";
 import Drag from "./components/MouseFollower";
+import { SiteDataProvider } from "./contexts/SiteDataContext";
+import InitialLoadReveal from "./components/RouteChangeLoader";
+import PageTransition from "./components/PageTransition";
 
 export const metadata: Metadata = {
   title: "Motion Pixels",
@@ -22,14 +25,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <nav className="w-full">
-          <Navbar />
-        </nav>
-        <main>
-          {" "}
-          <SmoothScroll /> {children}
-          <Drag />
-        </main>
+        <SiteDataProvider>
+          <InitialLoadReveal />
+          <nav className="w-full">
+            <Navbar />
+          </nav>
+          <main>
+            <SmoothScroll />
+            <PageTransition>{children}</PageTransition>
+            <Drag />
+          </main>
+        </SiteDataProvider>
       </body>
     </html>
   );
