@@ -1,6 +1,6 @@
 import MashreqHQ from "@/public/images/projects/mashreq/Asset 1.png";
 import DIFCGate from "@/public/images/projects/DIFC/Asset-2.png";
-import BeeahHQ from "@/public/images/projects/beeah/Beeah-gallery-2-min.jpg";
+import BeeahHQ from "@/public/images/projects/Beeah/Beeah-gallery-2-min.jpg";
 import ADNOCHQImage from "@/public/images/projects/adnoc/image-1.png";
 
 
