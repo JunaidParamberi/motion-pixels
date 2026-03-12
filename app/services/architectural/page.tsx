@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { ArrowLeft, ChevronRight } from "lucide-react";
 import {
   HiCube,
   HiViewGrid,
@@ -150,20 +151,26 @@ const ArchitecturalPage = () => {
 
       {/* Hero */}
       <header className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20">
-        {/* Back link - matches pill/glass design */}
         <MotionDiv
-          className="absolute top-24 left-0 right-0 z-20 container mx-auto px-6"
+          className="absolute left-0 right-0 z-20 container mx-auto px-4 sm:px-6"
+          style={{ top: "calc(var(--navbar-height, 4rem) + 2rem)" }}
           initial={{ opacity: 0, x: -8 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, ease, delay: 0.2 }}
         >
-          <Link
-            href="/services"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm text-slate-200 hover:text-white hover:border-indigo-500/40 hover:bg-white/10 transition-colors duration-300 text-xs font-semibold uppercase tracking-[0.2em]"
-          >
-            <span aria-hidden>←</span>
-            Back to Services
-          </Link>
+          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] uppercase">
+            <Link
+              href="/services"
+              className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4 shrink-0" aria-hidden />
+              What We Do
+            </Link>
+            <ChevronRight className="w-3.5 h-3.5 text-white/40 shrink-0" aria-hidden />
+            <span className="text-white">
+              {architecturalData.title}
+            </span>
+          </nav>
         </MotionDiv>
         <MotionDiv
           className="absolute inset-0 z-0"
@@ -188,7 +195,7 @@ const ArchitecturalPage = () => {
         </MotionDiv>
 
         <MotionDiv
-          className="container mx-auto px-6 relative z-10 text-center mt-[-5vh]"
+          className="container mx-auto px-4 sm:px-6 relative z-10 text-center mt-[-5vh]"
           variants={heroStagger}
           initial="hidden"
           animate="visible"
@@ -253,7 +260,7 @@ const ArchitecturalPage = () => {
       </header>
 
       {/* Main: side panel + cards */}
-      <main className="relative z-10 container mx-auto px-6 py-24">
+      <main className="relative z-10 container mx-auto px-4 sm:px-6 py-24">
         <div className="flex flex-col lg:flex-row gap-20">
           <aside className="lg:w-1/4">
             <MotionDiv
@@ -350,7 +357,7 @@ const ArchitecturalPage = () => {
 
       {/* CTA section */}
       <MotionSection
-        className="relative z-10 container mx-auto px-6 py-24 mb-12"
+        className="relative z-10 container mx-auto px-4 sm:px-6 py-24 mb-12"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={viewportOnce}

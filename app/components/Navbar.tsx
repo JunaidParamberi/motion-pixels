@@ -10,6 +10,8 @@ import { useSiteData } from "@/app/contexts/SiteDataContext";
 
 const SCROLL_THRESHOLD = 8;
 
+const NAVBAR_HEIGHT_CSS_VAR = "--navbar-height";
+
 const Navbar = () => {
   const pathName = usePathname();
   const { navLinks } = useSiteData();
@@ -17,7 +19,20 @@ const Navbar = () => {
   const lastScrollY = useRef(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
+  const navbarBarRef = useRef<HTMLDivElement>(null);
   const [clipOrigin, setClipOrigin] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const setNavbarHeight = () => {
+      if (navbarBarRef.current) {
+        const height = navbarBarRef.current.offsetHeight;
+        document.documentElement.style.setProperty(NAVBAR_HEIGHT_CSS_VAR, `${height}px`);
+      }
+    };
+    setNavbarHeight();
+    window.addEventListener("resize", setNavbarHeight);
+    return () => window.removeEventListener("resize", setNavbarHeight);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -67,7 +82,10 @@ const Navbar = () => {
         aria-hidden
       />
       <div className="relative">
-        <div className="container mx-auto px-4 sm:px-6 flex justify-between items-center h-16 md:h-18">
+        <div
+          ref={navbarBarRef}
+          className="container mx-auto px-4 sm:px-6 flex justify-between items-center h-16 md:h-18"
+        >
           <Link
             href="/"
             className="flex items-center shrink-0 transition-opacity hover:opacity-90"

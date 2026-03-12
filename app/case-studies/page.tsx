@@ -1,12 +1,145 @@
-"use client";
+"use client"
 
-import React, { useEffect } from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { caseStudySummaries, caseStudyDetails } from "@/app/data/site-data";
+import type { CaseStudySummary } from "@/app/data/site-data";
+import { ChevronDown } from "lucide-react";
+
+const ALL_TAG = "all";
+
+type SortKey = "title-asc" | "title-desc" | "year-desc" | "year-asc" | "added-desc";
+
+// Unique project types (tags) from data, sorted; "All" first
+function getFilterOptions(summaries: CaseStudySummary[]): string[] {
+  const tags = [...new Set(summaries.map((s) => s.tag.trim()))].filter(Boolean);
+  tags.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+  return [ALL_TAG, ...tags];
+}
+
+// Look up numeric year from detail data; non-numeric or missing -> 0
+function getYearForSlug(slug: string): number {
+  const detail = caseStudyDetails[slug];
+  if (!detail || !detail.year) return 0;
+  const y = parseInt(detail.year, 10);
+  return Number.isNaN(y) ? 0 : y;
+}
+
+const addedIndexMap: Record<string, number> = caseStudySummaries.reduce(
+  (acc, item, index) => {
+    acc[item.slug] = index;
+    return acc;
+  },
+  {} as Record<string, number>
+);
+
+function filterAndSort(
+  summaries: CaseStudySummary[],
+  filterTag: string,
+  sortKey: SortKey
+): CaseStudySummary[] {
+  const filtered =
+    filterTag === ALL_TAG
+      ? [...summaries]
+      : summaries.filter((s) => s.tag.trim().toLowerCase() === filterTag.toLowerCase());
+  const sorted = [...filtered].sort((a, b) => {
+    switch (sortKey) {
+      case "title-asc": {
+        return a.title.localeCompare(b.title, undefined, { sensitivity: "base" });
+      }
+      case "title-desc": {
+        return b.title.localeCompare(a.title, undefined, { sensitivity: "base" });
+      }
+      case "year-desc": {
+        const ay = getYearForSlug(a.slug);
+        const by = getYearForSlug(b.slug);
+        if (ay === by) {
+          return a.title.localeCompare(b.title, undefined, { sensitivity: "base" });
+        }
+        return by - ay;
+      }
+      case "year-asc": {
+        const ay = getYearForSlug(a.slug);
+        const by = getYearForSlug(b.slug);
+        if (ay === by) {
+          return a.title.localeCompare(b.title, undefined, { sensitivity: "base" });
+        }
+        return ay - by;
+      }
+      case "added-desc":
+      default: {
+        const ai = addedIndexMap[a.slug] ?? 0;
+        const bi = addedIndexMap[b.slug] ?? 0;
+        if (ai === bi) {
+          return b.title.localeCompare(a.title, undefined, { sensitivity: "base" });
+        }
+        // Newest added last in data should appear first
+        return bi - ai;
+      }
+    }
+  });
+  return sorted;
+}
 
 const CaseStudiesPage = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentQuery = searchParams.toString();
+
+  // URL is the single source of truth for filter + sort
+  const rawType = searchParams.get("type");
+  const rawSort = searchParams.get("sort") as SortKey | null;
+
+  const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
+
+  const filterOptions = useMemo(() => getFilterOptions(caseStudySummaries), []);
+
+  const filterTag =
+    rawType && (rawType === ALL_TAG || filterOptions.includes(rawType)) ? rawType : ALL_TAG;
+
+  const validSortKeys: SortKey[] = ["title-asc", "title-desc", "year-desc", "year-asc", "added-desc"];
+  const sortKey: SortKey = rawSort && validSortKeys.includes(rawSort) ? rawSort : "added-desc";
+
+  const displayItems = useMemo(
+    () => filterAndSort(caseStudySummaries, filterTag, sortKey),
+    [filterTag, sortKey]
+  );
+
   useEffect(() => {
     document.documentElement.classList.add("dark");
   }, []);
+
+  const updateUrl = (nextFilter: string, nextSort: SortKey) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (nextFilter === ALL_TAG) {
+      params.delete("type");
+    } else {
+      params.set("type", nextFilter);
+    }
+    if (nextSort === "added-desc") {
+      params.delete("sort");
+    } else {
+      params.set("sort", nextSort);
+    }
+    const query = params.toString();
+    const href = query ? `${pathname}?${query}` : pathname;
+    router.replace(href, { scroll: false });
+  };
+
+  const filterLabel = filterTag === ALL_TAG ? "All" : filterTag;
+  const sortLabel =
+    sortKey === "title-asc"
+      ? "Title A–Z"
+      : sortKey === "title-desc"
+      ? "Title Z–A"
+      : sortKey === "year-desc"
+      ? "Year (Newest)"
+      : sortKey === "year-asc"
+      ? "Year (Oldest)"
+      : "Latest Added";
 
   return (
     <motion.div
@@ -28,16 +161,24 @@ const CaseStudiesPage = () => {
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px]" />
         </motion.div>
 
-        <section className="pt-40 pb-16 px-6 md:px-12 max-w-7xl mx-auto">
-          <motion.h1
+        <section className="pt-40 pb-16 container mx-auto px-4 sm:px-6">
+          {/* <motion.h1
             className="font-display font-black text-5xl md:text-7xl lg:text-8xl text-white uppercase tracking-tighter mb-4"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
             Case Studies
-          </motion.h1>
-          <motion.p
+          </motion.h1> */}
+          <motion.h1
+        className="text-white text-4xl md:text-6xl font-extrabold text-left w-full leading-tight"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
+       Case Studies
+      </motion.h1>
+          {/* <motion.p
             className="text-gray-400 text-lg md:text-xl max-w-2xl font-light leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -46,94 +187,223 @@ const CaseStudiesPage = () => {
             Exploring the intersection of technology and art. We craft
             immersive digital experiences, visual effects, and interactive
             installations that redefine reality.
-          </motion.p>
+          </motion.p> */}
 
+          {/* Filters by project type */}
           <motion.div
-            className="mt-12 flex flex-wrap gap-4"
+            className="mt-12 flex flex-wrap items-center gap-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.2 }}
           >
-            {["All", "Immersive", "VFX", "Installations"].map((item, i) => (
-              <motion.button
-                key={i}
-                className={`px-4 py-1 text-sm tracking-widest border-b-2 uppercase font-medium transition-colors ${
-                  i === 0
-                    ? "border-white text-white"
-                    : "border-transparent text-gray-500 hover:text-white hover:border-gray-700"
-                }`}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+            <div className="flex flex-wrap gap-2">
+              {filterOptions.map((tag) => {
+                const value = tag === ALL_TAG ? ALL_TAG : tag;
+                const isActive = filterTag === value;
+                return (
+                  <motion.button
+                    key={tag}
+                    type="button"
+                    onClick={() => {
+                      updateUrl(value, sortKey);
+                    }}
+                    className={`px-4 py-1.5 text-sm tracking-widest border-b-2 uppercase font-medium transition-colors ${
+                      isActive
+                        ? "border-white text-white"
+                        : "border-transparent text-gray-500 hover:text-white hover:border-gray-600"
+                    }`}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    {tag === ALL_TAG ? "All" : tag}
+                  </motion.button>
+                );
+              })}
+            </div>
+
+            {/* Sort dropdown */}
+            <div className="relative ml-auto">
+              <button
+                type="button"
+                onClick={() => setSortDropdownOpen((o) => !o)}
+                className="inline-flex items-center gap-2 px-4 py-1.5 text-sm tracking-widest uppercase font-medium text-gray-400 hover:text-white transition-colors border border-white/20 rounded-md"
+                aria-expanded={sortDropdownOpen}
+                aria-haspopup="listbox"
+                aria-label="Sort by"
               >
-                {item}
-              </motion.button>
-            ))}
+                {sortLabel}
+                <ChevronDown
+                  className={`w-4 h-4 transition-transform ${sortDropdownOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+              <AnimatePresence>
+                {sortDropdownOpen && (
+                  <>
+                    <button
+                      type="button"
+                      className="fixed inset-0 z-10"
+                      aria-label="Close menu"
+                      onClick={() => setSortDropdownOpen(false)}
+                    />
+                    <motion.ul
+                      role="listbox"
+                      className="absolute right-0 top-full mt-2 z-20 min-w-[180px] py-2 rounded-lg bg-black/90 border border-white/10 backdrop-blur-md shadow-xl"
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.15 }}
+                    >
+                      <li>
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={sortKey === "title-asc"}
+                          onClick={() => {
+                            setSortDropdownOpen(false);
+                            updateUrl(filterTag, "title-asc");
+                          }}
+                          className={`w-full text-left px-4 py-2 text-sm uppercase tracking-wider ${
+                            sortKey === "title-asc" ? "text-white bg-white/10" : "text-gray-400 hover:text-white"
+                          }`}
+                        >
+                          Title A–Z
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={sortKey === "title-desc"}
+                          onClick={() => {
+                            setSortDropdownOpen(false);
+                            updateUrl(filterTag, "title-desc");
+                          }}
+                          className={`w-full text-left px-4 py-2 text-sm uppercase tracking-wider ${
+                            sortKey === "title-desc" ? "text-white bg-white/10" : "text-gray-400 hover:text-white"
+                          }`}
+                        >
+                          Title Z–A
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={sortKey === "year-desc"}
+                          onClick={() => {
+                            setSortDropdownOpen(false);
+                            updateUrl(filterTag, "year-desc");
+                          }}
+                          className={`w-full text-left px-4 py-2 text-sm uppercase tracking-wider ${
+                            sortKey === "year-desc" ? "text-white bg-white/10" : "text-gray-400 hover:text-white"
+                          }`}
+                        >
+                          Year (Newest)
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={sortKey === "year-asc"}
+                          onClick={() => {
+                            setSortDropdownOpen(false);
+                            updateUrl(filterTag, "year-asc");
+                          }}
+                          className={`w-full text-left px-4 py-2 text-sm uppercase tracking-wider ${
+                            sortKey === "year-asc" ? "text-white bg-white/10" : "text-gray-400 hover:text-white"
+                          }`}
+                        >
+                          Year (Oldest)
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={sortKey === "added-desc"}
+                          onClick={() => {
+                            setSortDropdownOpen(false);
+                            updateUrl(filterTag, "added-desc");
+                          }}
+                          className={`w-full text-left px-4 py-2 text-sm uppercase tracking-wider ${
+                            sortKey === "added-desc" ? "text-white bg-white/10" : "text-gray-400 hover:text-white"
+                          }`}
+                        >
+                          Latest Added
+                        </button>
+                      </li>
+                    </motion.ul>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
           </motion.div>
+
         </section>
 
-        <section className="px-6 md:px-12 pb-24 max-w-7xl mx-auto">
+        <section className="container mx-auto px-4 sm:px-6 pb-24">
           <motion.div
-            className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6"
+            className="flex flex-wrap gap-6"
             initial="hidden"
             animate="visible"
             variants={{
               hidden: {},
               visible: {
-                transition: { staggerChildren: 0.06, delayChildren: 0.2 },
+                transition: { staggerChildren: 0.06, delayChildren: 0.1 },
               },
             }}
           >
-            {[
-              {
-                title: "Neon Genesis",
-                tag: "Visual Effects",
-                color: "text-blue-400",
-                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAXHEw3WyPZGezWbor9LoFzHafofYNI0jlSDyOV7QHTEAu8mYAXu6BPna6YX5_gUF5GP8PiiBiypKjD0PjZWy47z10TTp0GN1FE_7ZnJkSvixhOyrncJhW0AraHQWSm7zRyXcmbJPeEqY3mkgc7nWMVPlGs6FfjPEMxPK21_jnlufi5oEWSRytRR8ftGQ1x2s8xTCqqlS_r8Db0mU9uP-CkeKRk0KgTajoCr8LabsmWoxaqI6BaohZAgEK3FnIQLM3U85EemvUUMo0Y",
-              },
-              {
-                title: "Core Matrix",
-                tag: "Data Viz",
-                color: "text-purple-400",
-                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAHGPvW9_8av1TOpuiHTarg0SbebvTQzTe2_GYfhCD8Fun_0uhUmYIkHK3Gj7wygMu8jydUO1WVannz2Oo2c8nFxwk7_5xjiMawYgMhPOMp7gqO8idHRCJVtL-Rsaa4jkxgTcsBymSsEnlSFROy9Wy1iUs-INnRMLZ4HVUragaYa8op5WCb6VkwdFQmwmZRSwvPe1kySKQ-KTvJM2KS1RkIRGo5On8lC_JtozD7nB-t-RdAR12wd-KqKBEjBnNEn43xfKuZzf6sE51B",
-              },
-              {
-                title: "Echoes of Tomorrow",
-                tag: "VR Experience",
-                color: "text-green-400",
-                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBH4v99ult_ZZ4LdYXmtlRASOnJN1FodT_oTaf8gx_X2sqBAUbZ_pDo2PAtAr9tCa9HBVkjCUvteTSRNgZtEh9YX0aX2cxZvJIF_zRv_dadMGPVhQMkoVGMYgAwjzpDJC8KeMVw6DLrIr84-W-sr7L_eGXWPkhjnDvUZ1pC5tiIDqcK-unienDIkdou8OKMPzskbMBdyZvrs9GnIm6-KUkcqGvKKa7dV5UAK6Nx6QT1XDxyipM0pJgG30Rkw3nVuTDhdPGRvDpTm6wO",
-              },
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                className="break-inside-avoid group relative overflow-hidden cursor-pointer"
-                variants={{
-                  hidden: { opacity: 0, y: 24 },
-                  visible: {
-                    opacity: 1,
-                    y: 0,
-                    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
-                  },
-                }}
-                whileHover={{ y: -4 }}
-              >
-                <img
-                  src={item.img}
-                  alt={item.title}
-                  className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
-                  <span
-                    className={`${item.color} text-xs font-bold tracking-widest uppercase mb-1`}
+            <AnimatePresence mode="popLayout">
+              {displayItems.map((item) => (
+                <motion.div
+                  key={item.slug}
+                  layout
+                  variants={{
+                    hidden: { opacity: 0, y: 24 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+                    },
+                  }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  className="w-full sm:w-[calc((100%-1.5rem)/2)] lg:w-[calc((100%-3rem)/3)] shrink-0"
+                >
+                  <Link
+                    href={
+                      currentQuery.length > 0
+                        ? `/case-studies/${item.slug}?${currentQuery}`
+                        : `/case-studies/${item.slug}`
+                    }
+                    className="block"
+                    data-cursor="zoom"
                   >
-                    {item.tag}
-                  </span>
-                  <h3 className="text-white font-display text-2xl font-bold uppercase tracking-wide">
-                    {item.title}
-                  </h3>
-                </div>
-              </motion.div>
-            ))}
-
+                    <motion.div
+                      className="group relative overflow-hidden cursor-pointer rounded-lg"
+                      whileHover={{ y: -4 }}
+                    >
+                      <img
+                        src={item.img}
+                        alt={item.title}
+                        className="w-full h-auto object-cover aspect-square transform group-hover:scale-105 transition-transform duration-700 ease-out"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                        <span
+                          className={`${item.color} text-xs font-bold tracking-widest uppercase mb-1`}
+                        >
+                          {item.tag}
+                        </span>
+                        <h3 className="text-white font-display text-2xl font-bold uppercase tracking-wide">
+                          {item.title}
+                        </h3>
+                      </div>
+                    </motion.div>
+                  </Link>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </motion.div>
         </section>
       </main>

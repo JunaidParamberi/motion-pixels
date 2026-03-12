@@ -4,7 +4,6 @@ import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import coverImg from "../Assets/Images/Home/Cover_1.jpg";
-import { heroData } from "@/app/data/site-data";
 import "@/public/fonts/Neusharp/Neusharp-Black.css";
 
 const HERO_BLUR_PLACEHOLDER =
@@ -45,7 +44,7 @@ const Hero = () => {
             ease: [0.25, 0.46, 0.45, 0.94],
           }}
         >
-          {heroData.titleLine1} <br /> {heroData.titleLine2}
+          Immersive Design <br /> for the Future
         </motion.h1>
       </div>
     </motion.div>

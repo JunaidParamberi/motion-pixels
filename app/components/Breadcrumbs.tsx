@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 interface BreadcrumbsProps {
   backHref: string;
@@ -11,7 +12,7 @@ const Breadcrumbs = ({ backHref, backLabel = "Back" }: BreadcrumbsProps) => {
       href={backHref}
       className="inline-flex items-center gap-2 text-xs md:text-sm uppercase tracking-[0.3em] text-white/70 hover:text-white transition-colors"
     >
-      <span className="text-white/60">←</span>
+      <ArrowLeft className="w-4 h-4 text-white/60 shrink-0" aria-hidden />
       {backLabel}
     </Link>
   );

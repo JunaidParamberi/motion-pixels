@@ -3,6 +3,7 @@
 import React, { useRef, useState } from "react";
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import serviceImage from "../Assets/Images/services/bg3.jpg";
 
@@ -265,8 +266,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
               <motion.span
                 animate={{ x: isHovered ? [0, 4, 0] : 0 }}
                 transition={{ duration: 1.2, repeat: isHovered ? Infinity : 0, ease: "easeInOut" }}
+                className="inline-flex"
               >
-                →
+                <ArrowRight className="w-4 h-4" aria-hidden />
               </motion.span>
             </motion.span>
           )}
