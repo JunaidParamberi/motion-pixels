@@ -35,8 +35,8 @@ export interface CaseStudyDetail {
 export const caseStudyDetails: Record<string, CaseStudyDetail> = {
   "boehringer-ingelheim": {
     slug: "boehringer-ingelheim",
-    title: "Project Neon",
-    subtitle: "Touch Screen Interactive Content",
+    title: "Touch Screen Interactive Content",
+    subtitle: "Interactive Presentation for Web and PC",
     tag: "Touch Screen Interactive Content",
     serviceFilter: "Custom Experiences",
     color: "text-green-400",
