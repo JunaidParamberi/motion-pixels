@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Play, ChevronLeft, ChevronRight, ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
+import type { CaseStudyDetail, CaseStudyMedia } from "../case-study-data";
 
 const MotionMain = motion.main;
 const MotionSection = motion.section;
@@ -15,23 +16,6 @@ const MotionH2 = motion.h2;
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 const viewportOnce = { once: true, margin: "-60px", amount: 0.15 };
-
-export type CaseStudy = {
-  title: string;
-  subtitle: string;
-  category: string;
-  year: string;
-  heroImage: string;
-  overview: string;
-  challenge: string[];
-  client: string;
-  services: string[];
-  location: string;
-  tunnelImage: string;
-  textureImage: string;
-  lightingImage: string;
-  landscapeImage: string;
-};
 
 const heroStagger = {
   hidden: { opacity: 0 },
@@ -47,7 +31,7 @@ const heroItem = {
 };
 
 interface CaseStudyDetailContentProps {
-  project: CaseStudy;
+  project: CaseStudyDetail;
 }
 
 export function CaseStudyDetailContent({ project }: CaseStudyDetailContentProps) {
@@ -65,36 +49,28 @@ export function CaseStudyDetailContent({ project }: CaseStudyDetailContentProps)
     return "image";
   };
 
-  const mediaItems = [
-    {
-      id: "tunnel",
-      type: inferType(project.tunnelImage),
-      src: project.tunnelImage,
-      label: "Sequence",
-      description: "Primary cinematic frame",
-    },
-    {
-      id: "texture",
-      type: inferType(project.textureImage),
-      src: project.textureImage,
-      label: "Concept",
-      description: "Material and surface studies",
-    },
-    {
-      id: "lighting",
-      type: inferType(project.lightingImage),
-      src: project.lightingImage,
-      label: "FX Pass",
-      description: "Lighting and FX detail",
-    },
-    {
-      id: "landscape",
-      type: inferType(project.landscapeImage),
-      src: project.landscapeImage,
-      label: "Final Frame",
-      description: "Wide establishing shot",
-    },
-  ];
+  const normalizedMedia = (project.media ?? [])
+    .filter((item): item is CaseStudyMedia => Boolean(item?.src))
+    .map((item, index) => ({
+      id: `media-${index}`,
+      type: item.type ?? inferType(item.src),
+      src: item.src,
+      label: item.label ?? `Media ${index + 1}`,
+      description: item.description ?? "Project media asset",
+    }));
+
+  const mediaItems =
+    normalizedMedia.length > 0
+      ? normalizedMedia
+      : [
+          {
+            id: "media-fallback",
+            type: inferType(project.heroImage),
+            src: project.heroImage,
+            label: "Hero",
+            description: "Project hero image",
+          },
+        ];
 
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -269,15 +245,17 @@ export function CaseStudyDetailContent({ project }: CaseStudyDetailContentProps)
                 </h3>
                 <p className="text-lg font-medium">{project.location}</p>
               </div>
-              <div className="pt-6">
+            { project.link && <div className="pt-6">
                 <a
-                  href="#"
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] uppercase border-b border-white pb-2 hover:text-white/60 hover:border-white/60 transition-all"
                 >
                   Launch Experience
                   <ExternalLink className="w-3.5 h-3.5" aria-hidden />
                 </a>
-              </div>
+              </div>}
             </div>
           </MotionDiv>
         </div>
@@ -303,73 +281,24 @@ export function CaseStudyDetailContent({ project }: CaseStudyDetailContentProps)
             },
           }}
         >
-          <MotionDiv
-            className="aspect-video w-full bg-black relative overflow-hidden rounded-lg group cursor-pointer"
-            variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } }}
-            transition={{ duration: 0.5, ease }}
-            onClick={() => openViewerAt(0)}
-            data-cursor="zoom"
-          >
-            <GalleryMediaCell item={mediaItems[0]} layout="video" />
-          </MotionDiv>
-          <MotionDiv
-            className="grid grid-cols-1 md:grid-cols-2 gap-6"
-            variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } }}
-            transition={{ duration: 0.5, ease }}
-          >
-            <div
-              className="w-full aspect-square relative overflow-hidden rounded-lg cursor-pointer group"
-              onClick={() => openViewerAt(1)}
-              data-cursor="zoom"
-            >
-              <GalleryMediaCell item={mediaItems[1]} layout="square" />
-            </div>
-            <div
-              className="w-full aspect-square relative overflow-hidden rounded-lg cursor-pointer group"
-              onClick={() => openViewerAt(2)}
-              data-cursor="zoom"
-            >
-              <GalleryMediaCell item={mediaItems[2]} layout="square" />
-            </div>
-          </MotionDiv>
-          <MotionDiv
-            variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } }}
-            transition={{ duration: 0.5, ease }}
-            className="w-full aspect-video relative cursor-pointer group rounded-lg overflow-hidden"
-            onClick={() => openViewerAt(3)}
-            data-cursor="zoom"
-          >
-            <GalleryMediaCell item={mediaItems[3]} layout="wide" />
-          </MotionDiv>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {mediaItems.map((item, index) => (
+              <MotionDiv
+                key={item.id}
+                className={getGalleryTileClass(index)}
+                variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } }}
+                transition={{ duration: 0.5, ease }}
+                onClick={() => openViewerAt(index)}
+                data-cursor="zoom"
+              >
+                <GalleryMediaCell item={item} layout={getGalleryTileLayout(index)} />
+              </MotionDiv>
+            ))}
+          </div>
         </motion.div>
       </MotionSection>
 
-      {/* Next project teaser */}
-      <MotionSection
-        className="py-20 border-t border-white/5 bg-black/20"
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={viewportOnce}
-        transition={{ duration: 0.5, ease }}
-      >
-        <div className="container mx-auto px-4 sm:px-6 flex flex-col items-center">
-          <p className="text-white/40 text-xs font-bold tracking-[0.3em] uppercase mb-8">
-            Next Project
-          </p>
-          <Link href={caseStudiesHref} className="group text-center block">
-            <MotionH2
-              className="text-4xl md:text-6xl font-bold tracking-tighter uppercase mb-6 group-hover:italic transition-all"
-              transition={{ duration: 0.2 }}
-            >
-              CORE MATRIX
-            </MotionH2>
-            <ArrowRight
-              className="w-10 h-10 inline-block group-hover:translate-x-4 transition-transform"
-              aria-hidden
-            />
-          </Link>
-        </div>
-      </MotionSection>
+  
 
       {/* Footer */}
       <motion.footer
@@ -501,6 +430,7 @@ export function CaseStudyDetailContent({ project }: CaseStudyDetailContentProps)
                           <video
                             src={item.src}
                             className="w-full h-full object-cover"
+                            autoPlay
                             muted
                             loop
                             playsInline
@@ -531,6 +461,19 @@ type GalleryMediaItem = {
   description: string;
 };
 
+function getGalleryTileLayout(index: number): "video" | "square" | "wide" {
+  if (index === 0) return "video";
+  if (index % 3 === 0) return "wide";
+  return "square";
+}
+
+function getGalleryTileClass(index: number): string {
+  const base = "relative overflow-hidden rounded-lg cursor-pointer group";
+  if (index === 0) return `${base} md:col-span-2 aspect-video`;
+  if (index % 3 === 0) return `${base} md:col-span-2 aspect-video`;
+  return `${base} aspect-square`;
+}
+
 function GalleryMediaCell({
   item,
   layout,
@@ -553,6 +496,7 @@ function GalleryMediaCell({
         <video
           src={item.src}
           className="absolute inset-0 w-full h-full object-cover"
+          autoPlay
           muted
           loop
           playsInline
@@ -612,31 +556,26 @@ function CarouselMedia({ item }: CarouselMediaProps) {
           }`}
           controls
           autoPlay
+          muted
+          loop
           playsInline
           onLoadedData={() => setIsLoaded(true)}
         />
       )}
 
-      {/* Center play button overlay only for video */}
-      {item.type === "video" && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#ff5a1f] flex items-center justify-center shadow-[0_0_40px_rgba(255,90,31,0.55)]">
-            <Play className="w-7 h-7 text-white translate-x-0.5" aria-hidden />
+      {/* Keep overlays for images only; avoid dark layer on fullscreen video */}
+      {item.type === "image" && (
+        <div className="absolute inset-x-0 bottom-0 p-4 md:p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+          <div>
+            <p className="text-xs md:text-sm tracking-[0.25em] uppercase text-white/60">
+              {item.label}
+            </p>
+            <p className="text-sm md:text-base text-white/90 mt-1">
+              {item.description}
+            </p>
           </div>
         </div>
       )}
-
-      {/* Bottom gradient and text */}
-      <div className="absolute inset-x-0 bottom-0 p-4 md:p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-        <div>
-          <p className="text-xs md:text-sm tracking-[0.25em] uppercase text-white/60">
-            {item.label}
-          </p>
-          <p className="text-sm md:text-base text-white/90 mt-1">
-            {item.description}
-          </p>
-        </div>
-      </div>
     </motion.div>
   );
 }

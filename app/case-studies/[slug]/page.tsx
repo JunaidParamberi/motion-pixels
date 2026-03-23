@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { CaseStudyDetailContent } from "./CaseStudyDetailContent";
-import { caseStudyDetails } from "@/app/data/site-data";
+import { caseStudyDetails } from "../case-study-data";
 
 interface CaseStudyPageProps {
   params: Promise<{ slug: string }>;

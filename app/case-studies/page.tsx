@@ -4,30 +4,39 @@ import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { caseStudySummaries, caseStudyDetails } from "@/app/data/site-data";
-import type { CaseStudySummary } from "@/app/data/site-data";
+import { servicesListing } from "@/app/data/site-data";
+import { caseStudyDetails } from "./case-study-data";
+import type { CaseStudyDetail } from "./case-study-data";
 import { ChevronDown } from "lucide-react";
 
 const ALL_TAG = "all";
 
 type SortKey = "title-asc" | "title-desc" | "year-desc" | "year-asc" | "added-desc";
+type CaseStudyCard = Pick<
+  CaseStudyDetail,
+  "slug" | "title" | "subtitle" | "tag" | "serviceFilter" | "client" | "color" | "cardImage" | "year"
+>;
 
-// Unique project types (tags) from data, sorted; "All" first
-function getFilterOptions(summaries: CaseStudySummary[]): string[] {
-  const tags = [...new Set(summaries.map((s) => s.tag.trim()))].filter(Boolean);
-  tags.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
-  return [ALL_TAG, ...tags];
-}
+const caseStudyCards: CaseStudyCard[] = Object.values(caseStudyDetails).map((detail) => ({
+  slug: detail.slug,
+  title: detail.title,
+  subtitle: detail.subtitle,
+  tag: detail.tag,
+  serviceFilter: detail.serviceFilter,
+  client: detail.client,
+  color: detail.color,
+  cardImage: detail.cardImage,
+  year: detail.year,
+}));
 
-// Look up numeric year from detail data; non-numeric or missing -> 0
-function getYearForSlug(slug: string): number {
-  const detail = caseStudyDetails[slug];
-  if (!detail || !detail.year) return 0;
-  const y = parseInt(detail.year, 10);
+const serviceFilterOptions = [ALL_TAG, ...servicesListing.map((service) => service.title)];
+
+function parseYear(year: string): number {
+  const y = parseInt(year, 10);
   return Number.isNaN(y) ? 0 : y;
 }
 
-const addedIndexMap: Record<string, number> = caseStudySummaries.reduce(
+const addedIndexMap: Record<string, number> = caseStudyCards.reduce(
   (acc, item, index) => {
     acc[item.slug] = index;
     return acc;
@@ -36,14 +45,25 @@ const addedIndexMap: Record<string, number> = caseStudySummaries.reduce(
 );
 
 function filterAndSort(
-  summaries: CaseStudySummary[],
+  items: CaseStudyCard[],
   filterTag: string,
+  searchQuery: string,
   sortKey: SortKey
-): CaseStudySummary[] {
-  const filtered =
+): CaseStudyCard[] {
+  const byService =
     filterTag === ALL_TAG
-      ? [...summaries]
-      : summaries.filter((s) => s.tag.trim().toLowerCase() === filterTag.toLowerCase());
+      ? [...items]
+      : items.filter((s) => s.serviceFilter.trim().toLowerCase() === filterTag.toLowerCase());
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const filtered =
+    normalizedQuery.length === 0
+      ? byService
+      : byService.filter((item) =>
+          [item.title, item.subtitle, item.tag, item.client].some((field) =>
+            field.toLowerCase().includes(normalizedQuery)
+          )
+        );
+
   const sorted = [...filtered].sort((a, b) => {
     switch (sortKey) {
       case "title-asc": {
@@ -53,16 +73,16 @@ function filterAndSort(
         return b.title.localeCompare(a.title, undefined, { sensitivity: "base" });
       }
       case "year-desc": {
-        const ay = getYearForSlug(a.slug);
-        const by = getYearForSlug(b.slug);
+        const ay = parseYear(a.year);
+        const by = parseYear(b.year);
         if (ay === by) {
           return a.title.localeCompare(b.title, undefined, { sensitivity: "base" });
         }
         return by - ay;
       }
       case "year-asc": {
-        const ay = getYearForSlug(a.slug);
-        const by = getYearForSlug(b.slug);
+        const ay = parseYear(a.year);
+        const by = parseYear(b.year);
         if (ay === by) {
           return a.title.localeCompare(b.title, undefined, { sensitivity: "base" });
         }
@@ -91,28 +111,28 @@ const CaseStudiesPage = () => {
 
   // URL is the single source of truth for filter + sort
   const rawType = searchParams.get("type");
+  const rawQuery = searchParams.get("q") ?? "";
   const rawSort = searchParams.get("sort") as SortKey | null;
 
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
 
-  const filterOptions = useMemo(() => getFilterOptions(caseStudySummaries), []);
-
   const filterTag =
-    rawType && (rawType === ALL_TAG || filterOptions.includes(rawType)) ? rawType : ALL_TAG;
+    rawType && (rawType === ALL_TAG || serviceFilterOptions.includes(rawType)) ? rawType : ALL_TAG;
 
   const validSortKeys: SortKey[] = ["title-asc", "title-desc", "year-desc", "year-asc", "added-desc"];
   const sortKey: SortKey = rawSort && validSortKeys.includes(rawSort) ? rawSort : "added-desc";
+  const searchQuery = rawQuery.trim();
 
   const displayItems = useMemo(
-    () => filterAndSort(caseStudySummaries, filterTag, sortKey),
-    [filterTag, sortKey]
+    () => filterAndSort(caseStudyCards, filterTag, searchQuery, sortKey),
+    [filterTag, searchQuery, sortKey]
   );
 
   useEffect(() => {
     document.documentElement.classList.add("dark");
   }, []);
 
-  const updateUrl = (nextFilter: string, nextSort: SortKey) => {
+  const updateUrl = (nextFilter: string, nextSort: SortKey, nextQuery: string) => {
     const params = new URLSearchParams(searchParams.toString());
     if (nextFilter === ALL_TAG) {
       params.delete("type");
@@ -123,6 +143,11 @@ const CaseStudiesPage = () => {
       params.delete("sort");
     } else {
       params.set("sort", nextSort);
+    }
+    if (nextQuery.trim().length === 0) {
+      params.delete("q");
+    } else {
+      params.set("q", nextQuery.trim());
     }
     const query = params.toString();
     const href = query ? `${pathname}?${query}` : pathname;
@@ -155,7 +180,7 @@ const CaseStudiesPage = () => {
           animate={{ scale: 1 }}
           transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?q=80&w=2080&auto=format&fit=crop')] bg-cover bg-center opacity-20 mix-blend-overlay" />
+          {/* <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?q=80&w=2080&auto=format&fit=crop')] bg-cover bg-center opacity-20 mix-blend-overlay" /> */}
           <div className="absolute inset-0 bg-gradient-to-b from-background-dark/80 via-background-dark/95 to-background-dark" />
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px]" />
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px]" />
@@ -197,7 +222,7 @@ const CaseStudiesPage = () => {
             transition={{ duration: 0.4, delay: 0.2 }}
           >
             <div className="flex flex-wrap gap-2">
-              {filterOptions.map((tag) => {
+              {serviceFilterOptions.map((tag) => {
                 const value = tag === ALL_TAG ? ALL_TAG : tag;
                 const isActive = filterTag === value;
                 return (
@@ -205,7 +230,7 @@ const CaseStudiesPage = () => {
                     key={tag}
                     type="button"
                     onClick={() => {
-                      updateUrl(value, sortKey);
+                      updateUrl(value, sortKey, searchQuery);
                     }}
                     className={`px-4 py-1.5 text-sm tracking-widest border-b-2 uppercase font-medium transition-colors ${
                       isActive
@@ -220,6 +245,15 @@ const CaseStudiesPage = () => {
                 );
               })}
             </div>
+
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(event) => updateUrl(filterTag, sortKey, event.target.value)}
+              placeholder="Search case studies"
+              className="w-full sm:w-72 bg-transparent border border-white/20 rounded-md px-4 py-1.5 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-white/50"
+              aria-label="Search case studies"
+            />
 
             {/* Sort dropdown */}
             <div className="relative ml-auto">
@@ -260,7 +294,7 @@ const CaseStudiesPage = () => {
                           aria-selected={sortKey === "title-asc"}
                           onClick={() => {
                             setSortDropdownOpen(false);
-                            updateUrl(filterTag, "title-asc");
+                            updateUrl(filterTag, "title-asc", searchQuery);
                           }}
                           className={`w-full text-left px-4 py-2 text-sm uppercase tracking-wider ${
                             sortKey === "title-asc" ? "text-white bg-white/10" : "text-gray-400 hover:text-white"
@@ -276,7 +310,7 @@ const CaseStudiesPage = () => {
                           aria-selected={sortKey === "title-desc"}
                           onClick={() => {
                             setSortDropdownOpen(false);
-                            updateUrl(filterTag, "title-desc");
+                            updateUrl(filterTag, "title-desc", searchQuery);
                           }}
                           className={`w-full text-left px-4 py-2 text-sm uppercase tracking-wider ${
                             sortKey === "title-desc" ? "text-white bg-white/10" : "text-gray-400 hover:text-white"
@@ -292,7 +326,7 @@ const CaseStudiesPage = () => {
                           aria-selected={sortKey === "year-desc"}
                           onClick={() => {
                             setSortDropdownOpen(false);
-                            updateUrl(filterTag, "year-desc");
+                            updateUrl(filterTag, "year-desc", searchQuery);
                           }}
                           className={`w-full text-left px-4 py-2 text-sm uppercase tracking-wider ${
                             sortKey === "year-desc" ? "text-white bg-white/10" : "text-gray-400 hover:text-white"
@@ -308,7 +342,7 @@ const CaseStudiesPage = () => {
                           aria-selected={sortKey === "year-asc"}
                           onClick={() => {
                             setSortDropdownOpen(false);
-                            updateUrl(filterTag, "year-asc");
+                            updateUrl(filterTag, "year-asc", searchQuery);
                           }}
                           className={`w-full text-left px-4 py-2 text-sm uppercase tracking-wider ${
                             sortKey === "year-asc" ? "text-white bg-white/10" : "text-gray-400 hover:text-white"
@@ -324,7 +358,7 @@ const CaseStudiesPage = () => {
                           aria-selected={sortKey === "added-desc"}
                           onClick={() => {
                             setSortDropdownOpen(false);
-                            updateUrl(filterTag, "added-desc");
+                            updateUrl(filterTag, "added-desc", searchQuery);
                           }}
                           className={`w-full text-left px-4 py-2 text-sm uppercase tracking-wider ${
                             sortKey === "added-desc" ? "text-white bg-white/10" : "text-gray-400 hover:text-white"
@@ -385,11 +419,11 @@ const CaseStudiesPage = () => {
                       whileHover={{ y: -4 }}
                     >
                       <img
-                        src={item.img}
+                        src={item.cardImage}
                         alt={item.title}
                         className="w-full h-auto object-cover aspect-square transform group-hover:scale-105 transition-transform duration-700 ease-out"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent flex flex-col justify-end p-6">
                         <span
                           className={`${item.color} text-xs font-bold tracking-widest uppercase mb-1`}
                         >
@@ -398,6 +432,12 @@ const CaseStudiesPage = () => {
                         <h3 className="text-white font-display text-2xl font-bold uppercase tracking-wide">
                           {item.title}
                         </h3>
+                        <p className="text-sm text-white/85 mt-1 line-clamp-2">
+                          {item.subtitle}
+                        </p>
+                        <p className="text-[11px] uppercase tracking-[0.18em] text-white/60 mt-3">
+                          {item.year}
+                        </p>
                       </div>
                     </motion.div>
                   </Link>
