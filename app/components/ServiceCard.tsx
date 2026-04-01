@@ -68,10 +68,10 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   const CardContent = (
     <motion.div
       ref={cardRef}
-      className="group w-full relative overflow-hidden cursor-pointer rounded-2xl"
+      className="group w-full relative overflow-hidden cursor-pointer rounded-none"
       style={{
-        height: "clamp(180px, 22vw, 260px)",
-        minHeight: 180,
+        height: "clamp(210px, 24vw, 260px)",
+        minHeight: 210,
         rotateX,
         rotateY,
         transformStyle: "preserve-3d",
@@ -94,7 +94,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       whileTap={{ scale: 0.99 }}
     >
       <motion.div
-        className="absolute inset-0 rounded-2xl overflow-hidden"
+        className="absolute inset-0 rounded-none overflow-hidden"
         initial={false}
         animate={{
           scale: isHovered ? 1.03 : 1,
@@ -118,6 +118,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
               fill
               className="object-cover"
               placeholder="blur"
+              sizes="(max-width: 768px) 100vw, 80vw"
             />
           </motion.div>
           <AnimatePresence mode="wait">
@@ -146,7 +147,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
         {/* Overlay gradient - dark at bottom for text, stacked first so it stays behind shine */}
         <motion.div
-          className="absolute inset-0 z-10 pointer-events-none rounded-2xl"
+          className="absolute inset-0 z-10 pointer-events-none rounded-none"
           style={{
             background:
               "linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.4) 35%, transparent 65%), linear-gradient(135deg, rgba(0,0,0,0.5) 0%, transparent 55%)",
@@ -158,7 +159,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
         {/* Hover shine - subtle diagonal highlight, above overlay */}
         <motion.div
-          className="absolute inset-0 z-[11] pointer-events-none rounded-2xl"
+          className="absolute inset-0 z-[11] pointer-events-none rounded-none"
           initial={false}
           animate={{ opacity: isHovered ? 1 : 0 }}
           transition={{ duration: 0.5 }}
@@ -170,7 +171,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
         {/* Left accent - violet tint on hover */}
         <motion.div
-          className="absolute left-0 top-0 bottom-0 w-1 z-20 rounded-l-2xl origin-bottom"
+          className="absolute left-0 top-0 bottom-0 w-1 z-20 rounded-none origin-bottom"
           initial={false}
           animate={{
             scaleY: isHovered ? 1 : 0.35,
@@ -180,9 +181,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         />
 
         {/* Index + category row */}
-        <div className="absolute top-5 left-6 z-20 flex items-baseline gap-3 md:top-6 md:left-7">
+        <div className="absolute top-4 left-4 z-20 flex items-baseline gap-2.5 md:top-6 md:left-7">
           <motion.span
-            className="text-white/35 font-black text-3xl md:text-4xl tabular-nums tracking-tighter select-none"
+            className="text-white/35 font-black text-2xl md:text-4xl tabular-nums tracking-tighter select-none"
             initial={false}
             animate={{ opacity: isHovered ? 0.25 : 0.5 }}
             transition={{ duration: 0.3 }}
@@ -190,7 +191,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
             {indexLabel}
           </motion.span>
           <motion.span
-            className="text-[10px] md:text-xs font-semibold uppercase tracking-[0.2em] text-white/50 border border-white/25 rounded-full px-2.5 py-0.5"
+            className="hidden sm:inline-flex text-[10px] md:text-xs font-semibold uppercase tracking-[0.2em] text-white/50 border border-white/25 rounded-full px-2.5 py-0.5"
             initial={false}
             animate={{ opacity: isHovered ? 0.9 : 0.6, borderColor: isHovered ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.25)" }}
             transition={{ duration: 0.3 }}
@@ -200,16 +201,16 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         </div>
 
         {/* Content */}
-        <div className="absolute inset-0 z-20 flex flex-col items-start justify-end p-6 md:p-8 pb-6 md:pb-8">
+        <div className="absolute inset-0 z-20 flex flex-col items-start justify-end p-4 sm:p-6 md:p-8 pb-5 sm:pb-6 md:pb-8">
           <motion.div
-            className="w-full"
+            className="w-full pr-12 sm:pr-20"
             initial={false}
             animate={{ y: isHovered ? 0 : 6 }}
             transition={{ duration: 0.35 }}
           >
             <div className="relative inline-block pb-1">
               <motion.h2
-                className="text-white text-3xl md:text-4xl font-black uppercase tracking-tight leading-[1.1] drop-shadow-[0_2px_20px_rgba(0,0,0,0.5)]"
+                className="text-white text-2xl sm:text-3xl md:text-4xl font-black uppercase tracking-tight leading-[1.05] drop-shadow-[0_2px_20px_rgba(0,0,0,0.5)]"
                 initial={false}
                 animate={{ filter: isHovered ? "brightness(1.08)" : "brightness(1)" }}
                 transition={{ duration: 0.3 }}
@@ -225,7 +226,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
               />
             </div>
             <motion.p
-              className="text-white/90 text-sm md:text-base font-medium max-w-xl leading-snug pt-2 drop-shadow-[0_1px_8px_rgba(0,0,0,0.4)]"
+              className="text-white/90 text-xs sm:text-sm md:text-base font-medium max-w-xl leading-snug pt-1.5 sm:pt-2 drop-shadow-[0_1px_8px_rgba(0,0,0,0.4)] [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] sm:[-webkit-line-clamp:3] overflow-hidden"
               initial={false}
               animate={{
                 opacity: isHovered ? 1 : 0.88,
@@ -239,13 +240,13 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
           {/* Bottom progress line */}
           <motion.div
-            className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/20 rounded-b-2xl origin-left z-20"
+            className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/20 rounded-none origin-left z-20"
             initial={false}
             animate={{ scaleX: isHovered ? 1 : 0 }}
             transition={{ duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
           />
           <motion.div
-            className="absolute bottom-0 left-0 right-0 h-0.5 bg-violet-400/90 rounded-b-2xl origin-left z-20"
+            className="absolute bottom-0 left-0 right-0 h-0.5 bg-violet-400/90 rounded-none origin-left z-20"
             initial={false}
             animate={{ scaleX: isHovered ? 1 : 0 }}
             transition={{ duration: 0.5, delay: 0.05, ease: [0.25, 0.46, 0.45, 0.94] }}
@@ -254,7 +255,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
           {/* CTA - always visible when link exists, stronger on hover */}
           {link && (
             <motion.span
-              className="absolute bottom-6 right-6 z-30 flex items-center gap-2 text-white font-semibold text-xs uppercase tracking-widest md:bottom-8 md:right-8"
+              className="absolute bottom-5 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 z-30 flex items-center gap-1.5 sm:gap-2 text-white font-semibold text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-widest"
               initial={false}
               animate={{
                 opacity: isHovered ? 1 : 0.5,
@@ -262,7 +263,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
               }}
               transition={{ duration: 0.25 }}
             >
-              <span>{isHovered ? "Explore" : "View"}</span>
+              <span className="hidden sm:inline">{isHovered ? "Explore" : "View"}</span>
               <motion.span
                 animate={{ x: isHovered ? [0, 4, 0] : 0 }}
                 transition={{ duration: 1.2, repeat: isHovered ? Infinity : 0, ease: "easeInOut" }}
@@ -276,7 +277,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
         {/* Border */}
         <motion.div
-          className="absolute inset-0 z-5 pointer-events-none rounded-2xl border border-white/[0.08]"
+          className="absolute inset-0 z-5 pointer-events-none rounded-none border border-white/[0.08]"
           initial={false}
           animate={{
             borderColor: isHovered ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.08)",
@@ -291,7 +292,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
     return (
       <Link
         href={link}
-        className="w-full block focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-2xl"
+        className="w-full block focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-none"
       >
         {CardContent}
       </Link>

@@ -8,11 +8,22 @@ type CursorMode = "default" | "link" | "zoom" | "play";
 const springConfig = { damping: 25, stiffness: 220, mass: 0.6 };
 
 export default function MouseFollower() {
+  const [enabled, setEnabled] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const { x, y } = useFollowPointer(ref);
   const [mode, setMode] = useState<CursorMode>("default");
 
   useEffect(() => {
+    const media = window.matchMedia("(pointer: fine)");
+    const setFromMedia = () => setEnabled(media.matches);
+    setFromMedia();
+    media.addEventListener("change", setFromMedia);
+    return () => media.removeEventListener("change", setFromMedia);
+  }, []);
+
+  useEffect(() => {
+    if (!enabled) return;
+
     const handleOver = (e: MouseEvent) => {
       const target = e.target as Element | null;
       const closest = target?.closest("[data-cursor],a,button");
@@ -47,7 +58,9 @@ export default function MouseFollower() {
       window.removeEventListener("mouseover", handleOver);
       window.removeEventListener("mouseout", handleOut);
     };
-  }, []);
+  }, [enabled]);
+
+  if (!enabled) return null;
 
   return (
     <motion.div
@@ -110,6 +123,8 @@ function useFollowPointer(ref: RefObject<HTMLDivElement | null>) {
   const y = useSpring(0, springConfig);
 
   useEffect(() => {
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+
     const handlePointerMove = ({ clientX, clientY }: MouseEvent) => {
       const size = 40; // cursor wrapper half-size (80px)
       x.set(clientX - size);

@@ -45,7 +45,7 @@ const ServicePage = () => {
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="none"
           poster={sampleImage.src}
           style={{ opacity: 0.7 }}
         />

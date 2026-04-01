@@ -16,7 +16,7 @@ export const servicesListing: Omit<ServiceListingItem, "image">[] = [
       "AI-driven content pipelines for commercials, episodic storytelling, and adaptive media.",
   },
   {
-    title: "Architectural Visualization",
+    title: "Architectural ",
     alt: "Architectural",
     link: "/services/architectural",
     subText:

@@ -14,6 +14,8 @@ export const contactData: ContactData = {
   },
   submitButton: "Send Message",
   submittingButton: "Sending...",
-  successMessage: "Message sent successfully!",
-  errorMessage: "Failed to send message. Please try again.",
+  successMessage:
+    "Message received. Our team is already reviewing your brief and will get back to you shortly.",
+  errorMessage:
+    "Oops - your message did not go through this time. Please try again in a moment or reach us directly by email.",
 };

@@ -51,6 +51,40 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (!isMobileMenuOpen) {
+      return;
+    }
+
+    const scrollY = window.scrollY;
+    const { style: bodyStyle } = document.body;
+    const { style: htmlStyle } = document.documentElement;
+
+    const prevBodyOverflow = bodyStyle.overflow;
+    const prevBodyPosition = bodyStyle.position;
+    const prevBodyTop = bodyStyle.top;
+    const prevBodyWidth = bodyStyle.width;
+    const prevBodyTouchAction = bodyStyle.touchAction;
+    const prevHtmlOverflow = htmlStyle.overflow;
+
+    bodyStyle.overflow = "hidden";
+    bodyStyle.position = "fixed";
+    bodyStyle.top = `-${scrollY}px`;
+    bodyStyle.width = "100%";
+    bodyStyle.touchAction = "none";
+    htmlStyle.overflow = "hidden";
+
+    return () => {
+      bodyStyle.overflow = prevBodyOverflow;
+      bodyStyle.position = prevBodyPosition;
+      bodyStyle.top = prevBodyTop;
+      bodyStyle.width = prevBodyWidth;
+      bodyStyle.touchAction = prevBodyTouchAction;
+      htmlStyle.overflow = prevHtmlOverflow;
+      window.scrollTo(0, scrollY);
+    };
+  }, [isMobileMenuOpen]);
+
   const isActive = (href: string) => {
     if (href === "/") return pathName === href;
     return pathName === href || pathName.startsWith(`${href}/`);
@@ -66,6 +100,10 @@ const Navbar = () => {
     }
     setIsMobileMenuOpen((prev) => !prev);
   };
+
+  useEffect(() => {
+    if (isMobileMenuOpen) setShowNavbar(true);
+  }, [isMobileMenuOpen]);
 
   return (
     <motion.header
@@ -91,13 +129,19 @@ const Navbar = () => {
             className="flex items-center shrink-0 transition-opacity hover:opacity-90"
             aria-label="Motion Pixels Home"
           >
-            <Image src={Logo} alt="Logo" width={250} height={40} />
+            <Image
+              src={Logo}
+              alt="Logo"
+              width={250}
+              height={40}
+              className="w-[190px] sm:w-[230px] md:w-[250px] h-auto"
+            />
           </Link>
 
           <button
             ref={hamburgerRef}
             type="button"
-            className="md:hidden p-2 -mr-2 text-white/90 hover:text-white transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-white/30 z-50"
+            className="md:hidden p-2.5 -mr-2 text-white/90 hover:text-white border border-white/20 bg-black/20 backdrop-blur-sm transition-colors focus:outline-none focus:ring-2 focus:ring-white/30 z-50"
             onClick={handleHamburgerClick}
             aria-expanded={isMobileMenuOpen}
             aria-label="Toggle menu"
@@ -134,11 +178,11 @@ const Navbar = () => {
                     <Link
                       key={link.name}
                       href={link.href}
-                      className={"group relative px-4 py-2 text-[13px] font-medium uppercase tracking-wider transition-colors duration-200 rounded-xl " + linkClass}
+                      className={"group relative px-4 py-2 text-[13px] font-medium uppercase tracking-wider transition-colors duration-200 " + linkClass}
                     >
                       <span className="relative z-10">{link.name}</span>
                       <span
-                        className={"absolute bottom-0 left-4 right-4 h-px bg-white transition-all duration-300 origin-left rounded-full " + underlineClass}
+                        className={"absolute bottom-0 left-4 right-4 h-px bg-white transition-all duration-300 origin-left " + underlineClass}
                         aria-hidden
                       />
                     </Link>
@@ -156,7 +200,7 @@ const Navbar = () => {
                   <Link
                     key={link.name}
                     href={link.href}
-                    className={"group relative px-5 py-2.5 text-[13px] font-medium uppercase tracking-wider transition-colors duration-200 rounded-xl shrink-0 " + linkClass}
+                    className={"group relative px-5 py-2.5 text-[13px] font-medium uppercase tracking-wider transition-colors duration-200 shrink-0 " + linkClass}
                   >
                     <span className="relative z-10">{link.name}</span>
                     <span className="absolute bottom-0 left-4 right-4 h-px hidden" aria-hidden />
@@ -170,52 +214,79 @@ const Navbar = () => {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            className="fixed inset-0 bg-black text-white flex flex-col items-center justify-center gap-10 z-40"
+            className="fixed inset-0 z-40 bg-black text-white"
             initial={{
               clipPath: `circle(0% at ${clipOrigin.x}px ${clipOrigin.y}px)`,
+              opacity: 0.7,
             }}
             animate={{
               clipPath: `circle(150% at ${clipOrigin.x}px ${clipOrigin.y}px)`,
+              opacity: 1,
               transition: { duration: 0.5, ease: [0.33, 1, 0.68, 1] },
             }}
             exit={{
               clipPath: `circle(0% at ${clipOrigin.x}px ${clipOrigin.y}px)`,
+              opacity: 0.7,
               transition: { duration: 0.35, ease: [0.33, 1, 0.68, 1] },
             }}
           >
-            <nav className="flex flex-col items-center gap-8">
-              {navLinks.map((link, i) => (
-                <motion.div
-                  key={link.name}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 + i * 0.05, duration: 0.25 }}
-                >
-                  <Link
-                    href={link.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`text-lg uppercase tracking-[0.25em] font-medium transition-opacity hover:opacity-80 ${
-                      isActive(link.href) ? "text-white" : "text-white/80"
-                    }`}
-                  >
-                    {link.name}
-                  </Link>
-                </motion.div>
-              ))}
-            </nav>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              <Link
-                href="/contact"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="inline-flex items-center justify-center rounded-full border border-white/50 px-8 py-3 text-sm uppercase tracking-[0.2em] font-medium text-white hover:bg-white hover:text-black transition-colors duration-200"
+            <div className="relative h-full w-full max-w-md mx-auto px-7 pt-24 pb-10 flex flex-col overflow-hidden">
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.08, duration: 0.25 }}
+                className="text-[10px] uppercase tracking-[0.35em] text-white/45"
               >
-                Start Project
-              </Link>
-            </motion.div>
+                Navigation
+              </motion.div>
+
+              <nav className="mt-10 space-y-3">
+                {navLinks.map((link, i) => {
+                  const active = isActive(link.href);
+                  return (
+                    <motion.div
+                      key={link.name}
+                      initial={{ opacity: 0, y: 14 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.12 + i * 0.06, duration: 0.28 }}
+                    >
+                      <Link
+                        href={link.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`group flex items-center justify-between border-b border-white/10 py-3 ${
+                          active ? "text-white" : "text-white/75"
+                        }`}
+                      >
+                        <span className="text-2xl leading-none font-semibold tracking-[0.04em] uppercase">
+                          {link.name}
+                        </span>
+                        <span className="text-xs tracking-[0.25em] text-white/40 group-hover:text-white/80 transition-colors">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+              </nav>
+
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35, duration: 0.28 }}
+                className="mt-auto"
+              >
+                <Link
+                  href="/contact"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="inline-flex w-full items-center justify-center border border-white/45 px-8 py-4 text-sm uppercase tracking-[0.26em] font-medium text-white hover:bg-white hover:text-black transition-colors duration-200"
+                >
+                  Start Project
+                </Link>
+                <p className="mt-3 text-[10px] uppercase tracking-[0.22em] text-white/35 text-center">
+                  Let&apos;s build something cinematic
+                </p>
+              </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

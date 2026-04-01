@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { loadFireworksPreset } from "@tsparticles/preset-fireworks";
 import {
   type Container,
   Engine,
@@ -13,19 +12,30 @@ import { loadSlim } from "@tsparticles/slim"; // using slim version of tsparticl
 
 const ParticlesBackground = () => {
   const [init, setInit] = useState(false);
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    const canRun =
+      window.matchMedia("(min-width: 768px)").matches &&
+      window.matchMedia("(pointer: fine)").matches &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setEnabled(canRun);
+  }, []);
 
   // this should be run only once per application lifetime
   useEffect(() => {
+    if (!enabled) return;
+
     initParticlesEngine(async (engine: Engine) => {
       // load the slim version to reduce the bundle size
       await loadSlim(engine);
     }).then(() => {
       setInit(true);
     });
-  }, []);
+  }, [enabled]);
 
   const particlesLoaded = async (container?: Container): Promise<void> => {
-    console.log(container);
+    void container;
   };
 
   const options: ISourceOptions = useMemo(
@@ -35,7 +45,7 @@ const ParticlesBackground = () => {
           value: "transparent", // Dark blue background
         },
       },
-      fpsLimit: 120, // Frame rate limit
+      fpsLimit: 60,
       interactivity: {
         events: {
           onClick: {
@@ -83,7 +93,7 @@ const ParticlesBackground = () => {
             enable: true, // Enable particle density
             area: 800,
           },
-          value: 300, // Number of particles
+          value: 120,
         },
         opacity: {
           value: 0.5, // Particle opacity
@@ -96,13 +106,13 @@ const ParticlesBackground = () => {
           random: true,
         },
       },
-      detectRetina: true, // Enable retina detection
+      detectRetina: false,
     }),
     []
   );
 
   // Only render the particles if initialized
-  return init ? (
+  return init && enabled ? (
     <Particles
       id="tsparticles"
       particlesLoaded={particlesLoaded}

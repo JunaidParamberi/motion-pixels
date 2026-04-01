@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Play, ChevronLeft, ChevronRight, ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import type { CaseStudyDetail, CaseStudyMedia } from "../case-study-data";
 
 const MotionMain = motion.main;
@@ -57,11 +57,29 @@ export function CaseStudyDetailContent({ project }: CaseStudyDetailContentProps)
       src: item.src,
       label: item.label ?? `Media ${index + 1}`,
       description: item.description ?? "Project media asset",
+      poster: undefined as string | undefined,
     }));
 
+  const imagePosters = normalizedMedia
+    .filter((item) => item.type === "image")
+    .map((item) => item.src);
+  const fallbackPoster = imagePosters[0] ?? project.heroImage;
+
+  let videoPosterIndex = 0;
+  const normalizedMediaWithPoster = normalizedMedia.map((item) => {
+    if (item.type !== "video") {
+      return { ...item, poster: undefined };
+    }
+    const poster =
+      imagePosters.length > 0
+        ? imagePosters[videoPosterIndex++ % imagePosters.length]
+        : fallbackPoster;
+    return { ...item, poster };
+  });
+
   const mediaItems =
-    normalizedMedia.length > 0
-      ? normalizedMedia
+    normalizedMediaWithPoster.length > 0
+      ? normalizedMediaWithPoster
       : [
           {
             id: "media-fallback",
@@ -69,6 +87,7 @@ export function CaseStudyDetailContent({ project }: CaseStudyDetailContentProps)
             src: project.heroImage,
             label: "Hero",
             description: "Project hero image",
+            poster: project.heroImage,
           },
         ];
 
@@ -149,7 +168,7 @@ export function CaseStudyDetailContent({ project }: CaseStudyDetailContentProps)
             <MotionH1
               variants={heroItem}
               transition={{ duration: 0.55, ease }}
-              className="font-extrabold text-5xl md:text-8xl lg:text-9xl tracking-tighter uppercase leading-none mb-4"
+              className="font-extrabold text-4xl md:text-6xl lg:text-7xl tracking-tighter uppercase leading-none mb-4"
             >
               {project.title}
             </MotionH1>
@@ -211,12 +230,12 @@ export function CaseStudyDetailContent({ project }: CaseStudyDetailContentProps)
 
           <MotionDiv
             className="lg:col-span-4 border-l border-white/10 lg:pl-12 pt-8 lg:pt-0"
-            initial={{ opacity: 0, x: 24 }}
+            initial={false}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={viewportOnce}
             transition={{ duration: 0.5, ease }}
           >
-            <div className="sticky top-32 space-y-10">
+            <div className="lg:sticky lg:top-32 space-y-10">
               <div>
                 <h3 className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/30 mb-2">
                   Client
@@ -298,56 +317,6 @@ export function CaseStudyDetailContent({ project }: CaseStudyDetailContentProps)
         </motion.div>
       </MotionSection>
 
-  
-
-      {/* Footer */}
-      <motion.footer
-        className="bg-black py-12 border-t border-white/5"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={viewportOnce}
-        transition={{ duration: 0.4 }}
-      >
-        <div className="container mx-auto px-4 sm:px-6 flex flex-col md:flex-row justify-between items-center gap-8">
-          <Link
-            href={caseStudiesHref}
-            onClick={(event) => {
-              event.preventDefault();
-              router.back();
-            }}
-            className="flex items-center gap-2 group text-white/40 hover:text-white transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" aria-hidden />
-            <span className="text-[10px] font-bold tracking-[0.2em] uppercase">
-              Back to Case Studies
-            </span>
-          </Link>
-          <div className="flex gap-8">
-            <a
-              href="#"
-              className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/40 hover:text-white transition-colors"
-            >
-              Instagram
-            </a>
-            <a
-              href="#"
-              className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/40 hover:text-white transition-colors"
-            >
-              Behance
-            </a>
-            <a
-              href="#"
-              className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/40 hover:text-white transition-colors"
-            >
-              LinkedIn
-            </a>
-          </div>
-          <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/20">
-            © {project.year} Motion Pixels
-          </p>
-        </div>
-      </motion.footer>
-
       {/* Fullscreen media viewer */}
       <AnimatePresence>
         {isViewerOpen && (
@@ -383,14 +352,14 @@ export function CaseStudyDetailContent({ project }: CaseStudyDetailContentProps)
                 {/* Left / right arrows */}
               <button
                 onClick={goPrev}
-                className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/5 hover:bg-white/15 border border-white/20 items-center justify-center text-white/80"
+                className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/5 hover:bg-white/15 border border-white/20 items-center justify-center text-white/80"
                 aria-label="Previous"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
               <button
                 onClick={goNext}
-                className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/5 hover:bg-white/15 border border-white/20 items-center justify-center text-white/80"
+                className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/5 hover:bg-white/15 border border-white/20 items-center justify-center text-white/80"
                 aria-label="Next"
               >
                 <ChevronRight className="w-5 h-5" />
@@ -412,7 +381,7 @@ export function CaseStudyDetailContent({ project }: CaseStudyDetailContentProps)
                     <button
                       key={item.id}
                       onClick={() => setActiveIndex(index)}
-                      className={`relative flex-shrink-0 overflow-hidden rounded-md border transition-all ${
+                      className={`relative flex-shrink-0 overflow-hidden border transition-all ${
                         isActive
                           ? "border-white/80 ring-2 ring-white/40"
                           : "border-white/10 hover:border-white/40"
@@ -424,6 +393,9 @@ export function CaseStudyDetailContent({ project }: CaseStudyDetailContentProps)
                             src={item.src}
                             alt={item.label}
                             fill
+                            unoptimized
+                            loading="eager"
+                            sizes="128px"
                             className="object-cover"
                           />
                         ) : (
@@ -434,6 +406,7 @@ export function CaseStudyDetailContent({ project }: CaseStudyDetailContentProps)
                             muted
                             loop
                             playsInline
+                            preload="metadata"
                           />
                         )}
                       </div>
@@ -459,6 +432,7 @@ type GalleryMediaItem = {
   src: string;
   label: string;
   description: string;
+  poster?: string;
 };
 
 function getGalleryTileLayout(index: number): "video" | "square" | "wide" {
@@ -468,7 +442,7 @@ function getGalleryTileLayout(index: number): "video" | "square" | "wide" {
 }
 
 function getGalleryTileClass(index: number): string {
-  const base = "relative overflow-hidden rounded-lg cursor-pointer group";
+  const base = "relative overflow-hidden cursor-pointer group";
   if (index === 0) return `${base} md:col-span-2 aspect-video`;
   if (index % 3 === 0) return `${base} md:col-span-2 aspect-video`;
   return `${base} aspect-square`;
@@ -481,8 +455,6 @@ function GalleryMediaCell({
   item: GalleryMediaItem;
   layout: "video" | "square" | "wide";
 }) {
-  const isVideo = item.type === "video";
-
   return (
     <>
       {item.type === "image" ? (
@@ -490,6 +462,9 @@ function GalleryMediaCell({
           src={item.src}
           alt={item.label}
           fill
+          unoptimized
+          loading="eager"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover w-full h-full"
         />
       ) : (
@@ -503,11 +478,6 @@ function GalleryMediaCell({
           preload="metadata"
         />
       )}
-      {isVideo && (
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm pointer-events-none">
-          <Play className="w-14 h-14 text-white drop-shadow-lg" aria-hidden />
-        </div>
-      )}
     </>
   );
 }
@@ -519,6 +489,7 @@ interface CarouselMediaProps {
     src: string;
     label: string;
     description: string;
+    poster?: string;
   };
 }
 
@@ -527,7 +498,7 @@ function CarouselMedia({ item }: CarouselMediaProps) {
 
   return (
     <motion.div
-      className="relative w-full max-w-5xl aspect-video rounded-xl overflow-hidden bg-black/60 border border-white/15"
+      className="relative w-full max-w-5xl aspect-video overflow-hidden bg-black/60 border border-white/15"
       initial={{ opacity: 0, scale: 0.97, y: 20 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.97, y: 20 }}
@@ -543,7 +514,10 @@ function CarouselMedia({ item }: CarouselMediaProps) {
           src={item.src}
           alt={item.label}
           fill
-          className={`object-cover transition-opacity duration-500 ${
+          unoptimized
+          loading="eager"
+          sizes="(max-width: 768px) 100vw, 1200px"
+          className={`object-contain transition-opacity duration-500 ${
             isLoaded ? "opacity-100" : "opacity-0"
           }`}
           onLoadingComplete={() => setIsLoaded(true)}
@@ -551,7 +525,7 @@ function CarouselMedia({ item }: CarouselMediaProps) {
       ) : (
         <video
           src={item.src}
-          className={`w-full h-full object-cover transition-opacity duration-500 ${
+          className={`w-full h-full object-contain transition-opacity duration-500 ${
             isLoaded ? "opacity-100" : "opacity-0"
           }`}
           controls
@@ -559,6 +533,8 @@ function CarouselMedia({ item }: CarouselMediaProps) {
           muted
           loop
           playsInline
+          preload="metadata"
+          poster={item.poster}
           onLoadedData={() => setIsLoaded(true)}
         />
       )}

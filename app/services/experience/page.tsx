@@ -238,7 +238,7 @@ const ExperiencePage = () => {
           <MotionDiv
             variants={heroItem}
             transition={{ duration: 0.5, ease }}
-            className="inline-block mb-6 px-4 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm"
+            className="inline-block mb-6 px-4 py-1 border border-white/10 bg-white/5 backdrop-blur-sm"
           >
             <p className="text-indigo-300 tracking-[0.3em] uppercase text-xs font-bold">
               Innovation Through Immersion
@@ -299,9 +299,9 @@ const ExperiencePage = () => {
         <div className="flex flex-col lg:flex-row gap-20">
           <aside className="lg:w-1/4">
             <MotionDiv
-              className="sticky top-32 p-8 rounded-r-2xl rounded-l-sm border-l-2 border-indigo-500/60 bg-white/[0.02] backdrop-blur-[4px]"
+              className="lg:sticky lg:top-32 p-8 border-l-2 border-indigo-500/60 bg-white/[0.02] backdrop-blur-[4px]"
               style={{ borderLeftColor: "rgba(99, 102, 241, 0.3)" }}
-              initial={{ opacity: 0, x: -24 }}
+              initial={false}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={viewportOnce}
               transition={{ duration: 0.6, ease }}
@@ -323,14 +323,14 @@ const ExperiencePage = () => {
               </p>
               <div className="flex gap-4 mt-auto">
                 <MotionDiv
-                  className="w-12 h-12 rounded-xl flex items-center justify-center text-indigo-400 bg-[rgba(15,15,20,0.4)] backdrop-blur-[16px] border border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.3)] cursor-default"
+                  className="w-12 h-12 flex items-center justify-center text-indigo-400 bg-[rgba(15,15,20,0.4)] backdrop-blur-[16px] border border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.3)] cursor-default"
                   whileHover={{ scale: 1.05, borderColor: "rgba(99, 102, 241, 0.5)", color: "white" }}
                   transition={{ duration: 0.25, ease }}
                 >
                   <HiViewGrid className="text-2xl" />
                 </MotionDiv>
                 <MotionDiv
-                  className="w-12 h-12 rounded-xl flex items-center justify-center text-indigo-400 bg-[rgba(15,15,20,0.4)] backdrop-blur-[16px] border border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.3)] cursor-default"
+                  className="w-12 h-12 flex items-center justify-center text-indigo-400 bg-[rgba(15,15,20,0.4)] backdrop-blur-[16px] border border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.3)] cursor-default"
                   whileHover={{ scale: 1.05, borderColor: "rgba(99, 102, 241, 0.5)", color: "white" }}
                   transition={{ duration: 0.25, ease }}
                 >
@@ -341,7 +341,7 @@ const ExperiencePage = () => {
           </aside>
 
           <MotionDiv
-            className="lg:w-3/4 grid md:grid-cols-2 gap-6"
+            className="w-full lg:w-3/4 grid md:grid-cols-2 gap-6"
             initial="hidden"
             whileInView="visible"
             viewport={viewportOnce}
@@ -364,13 +364,13 @@ const ExperiencePage = () => {
                   }}
                   transition={{ duration: 0.5, ease }}
                   whileHover={{ y: -6 }}
-                  className="group p-10 rounded-2xl relative overflow-hidden bg-[rgba(15,15,20,0.4)] backdrop-blur-[16px] border border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.3)] hover:bg-[rgba(30,30,40,0.5)] hover:border-indigo-500/50 hover:shadow-[0_0_20px_rgba(99,102,241,0.15),inset_0_0_20px_rgba(99,102,241,0.05)] transition-colors duration-300"
+                  className="group p-10 relative overflow-hidden bg-[rgba(15,15,20,0.4)] backdrop-blur-[16px] border border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.3)] hover:bg-[rgba(30,30,40,0.5)] hover:border-indigo-500/50 hover:shadow-[0_0_20px_rgba(99,102,241,0.15),inset_0_0_20px_rgba(99,102,241,0.05)] transition-colors duration-300"
                 >
                   <div
                     className={`absolute -right-10 -top-10 w-40 h-40 rounded-full blur-3xl transition-colors duration-500 ${colors.bg}`}
                   />
                   <MotionDiv
-                    className={`w-14 h-14 rounded-lg bg-white/5 flex items-center justify-center mb-8 border border-white/10 group-hover:border-current transition-colors ${colors.text}`}
+                    className={`w-14 h-14 bg-white/5 flex items-center justify-center mb-8 border border-white/10 group-hover:border-current transition-colors ${colors.text}`}
                     whileHover={{ scale: 1.08 }}
                     transition={{ duration: 0.25 }}
                   >
@@ -400,7 +400,7 @@ const ExperiencePage = () => {
         transition={{ duration: 0.6, ease }}
       >
         <MotionDiv
-          className="rounded-[2rem] p-12 md:p-24 text-center relative overflow-hidden border border-white/10 bg-[rgba(15,15,20,0.4)] backdrop-blur-[16px] shadow-[0_4px_30px_rgba(0,0,0,0.3)]"
+          className="p-12 md:p-24 text-center relative overflow-hidden border border-white/10 bg-[rgba(15,15,20,0.4)] backdrop-blur-[16px] shadow-[0_4px_30px_rgba(0,0,0,0.3)]"
           initial={{ opacity: 0, scale: 0.98 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={viewportOnce}
@@ -448,7 +448,7 @@ const ExperiencePage = () => {
               <MotionDiv whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
                 <Link
                   href="/contact"
-                  className="group relative block px-10 py-4 rounded-full bg-indigo-500 text-white font-bold overflow-hidden shadow-[0_0_30px_rgba(99,102,241,0.4)] hover:shadow-[0_0_50px_rgba(99,102,241,0.6)] transition-shadow duration-300"
+                  className="group relative block px-10 py-4 bg-indigo-500 text-white font-bold overflow-hidden shadow-[0_0_30px_rgba(99,102,241,0.4)] hover:shadow-[0_0_50px_rgba(99,102,241,0.6)] transition-shadow duration-300"
                 >
                   <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                   <span className="relative">START A PROJECT</span>
@@ -457,7 +457,7 @@ const ExperiencePage = () => {
               <MotionDiv whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
                 <Link
                   href="/case-studies"
-                  className="group px-10 py-4 rounded-full border border-white/20 text-white font-bold hover:bg-white/5 transition-colors duration-300 flex items-center gap-2"
+                  className="group px-10 py-4 border border-white/20 text-white font-bold hover:bg-white/5 transition-colors duration-300 flex items-center gap-2"
                 >
                   <HiFilm className="text-lg" />
                   <span>VIEW SHOWREEL</span>
