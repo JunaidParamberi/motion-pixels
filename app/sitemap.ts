@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { caseStudyDetails } from "./case-studies/case-study-data";
+import { caseStudyDetails, disabledCaseStudySlugs } from "./case-studies/case-study-data";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://motionpixels.me";
@@ -56,14 +56,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  const caseStudyRoutes: MetadataRoute.Sitemap = Object.values(caseStudyDetails).map(
-    (project) => ({
+  const caseStudyRoutes: MetadataRoute.Sitemap = Object.values(caseStudyDetails)
+    .filter(
+      (project) =>
+        !disabledCaseStudySlugs.includes(
+          project.slug as (typeof disabledCaseStudySlugs)[number]
+        )
+    )
+    .map((project) => ({
       url: `${base}/case-studies/${project.slug}`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.7,
-    })
-  );
+    }));
 
   return [...staticRoutes, ...caseStudyRoutes];
 }

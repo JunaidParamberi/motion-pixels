@@ -36,6 +36,8 @@ export interface CaseStudyDetail {
   link?: string;
 }
 
+export const disabledCaseStudySlugs = ["ciel-tower"] as const;
+
 export const caseStudyDetails: Record<string, CaseStudyDetail> = {
   "boehringer-ingelheim": {
     slug: "boehringer-ingelheim",

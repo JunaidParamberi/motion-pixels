@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { caseStudyDetails } from "./case-study-data";
+import { caseStudyDetails, disabledCaseStudySlugs } from "./case-study-data";
 import type { CaseStudyDetail } from "./case-study-data";
 
 type CaseStudyCard = Pick<
@@ -12,15 +12,17 @@ type CaseStudyCard = Pick<
   "slug" | "title" | "subtitle" | "tag" | "color" | "cardImage" | "year"
 >;
 
-const caseStudyCards: CaseStudyCard[] = Object.values(caseStudyDetails).map((detail) => ({
-  slug: detail.slug,
-  title: detail.title,
-  subtitle: detail.subtitle,
-  tag: detail.tag,
-  color: detail.color,
-  cardImage: detail.cardImage,
-  year: detail.year,
-}));
+const caseStudyCards: CaseStudyCard[] = Object.values(caseStudyDetails)
+  .filter((detail) => !disabledCaseStudySlugs.includes(detail.slug as (typeof disabledCaseStudySlugs)[number]))
+  .map((detail) => ({
+    slug: detail.slug,
+    title: detail.title,
+    subtitle: detail.subtitle,
+    tag: detail.tag,
+    color: detail.color,
+    cardImage: detail.cardImage,
+    year: detail.year,
+  }));
 
 const CaseStudiesPage = () => {
   useEffect(() => {

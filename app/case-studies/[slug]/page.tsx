@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CaseStudyDetailContent } from "./CaseStudyDetailContent";
-import { caseStudyDetails } from "../case-study-data";
+import { caseStudyDetails, disabledCaseStudySlugs } from "../case-study-data";
 
 interface CaseStudyPageProps {
   params: Promise<{ slug: string }>;
@@ -13,7 +13,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const project = caseStudyDetails[slug];
 
-  if (!project) {
+  if (!project || disabledCaseStudySlugs.includes(slug as (typeof disabledCaseStudySlugs)[number])) {
     return {
       title: "Case Study Not Found",
     };
@@ -52,7 +52,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
   const { slug } = await params;
   const project = caseStudyDetails[slug];
 
-  if (!project) {
+  if (!project || disabledCaseStudySlugs.includes(slug as (typeof disabledCaseStudySlugs)[number])) {
     return notFound();
   }
 
