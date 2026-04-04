@@ -30,6 +30,20 @@ export async function generateMetadata({
       description: project.overview,
       type: "article",
       url: `https://motionpixels.me/case-studies/${project.slug}`,
+      images: [
+        {
+          url: "/embed-img.png",
+          width: 2932,
+          height: 1590,
+          alt: "Motion Pixels showcase",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${project.title} | Motion Pixels`,
+      description: project.overview,
+      images: ["/embed-img.png"],
     },
   };
 }

@@ -1,7 +1,8 @@
 "use client"
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { caseStudyDetails } from "./case-study-data";
 import type { CaseStudyDetail } from "./case-study-data";
@@ -90,11 +91,7 @@ const CaseStudiesPage = () => {
                       className="group relative overflow-hidden cursor-pointer rounded-lg"
                       whileHover={{ y: -4 }}
                     >
-                      <img
-                        src={item.cardImage}
-                        alt={item.title}
-                        className="w-full h-auto object-cover aspect-square transform group-hover:scale-105 transition-transform duration-700 ease-out"
-                      />
+                      <CaseStudyCardMedia src={item.cardImage} alt={item.title} />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent flex flex-col justify-end p-6">
                         <span className={`${item.color} text-xs font-bold tracking-widest uppercase mb-1`}>
                           {item.tag}
@@ -120,5 +117,29 @@ const CaseStudiesPage = () => {
     </motion.div>
   );
 };
+
+function CaseStudyCardMedia({ src, alt }: { src: string; alt: string }) {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  return (
+    <div className="relative w-full aspect-square">
+      {!isLoaded && (
+        <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-white/10 via-white/5 to-white/10" />
+      )}
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        unoptimized
+        loading="eager"
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        onLoadingComplete={() => setIsLoaded(true)}
+        className={`object-cover transform group-hover:scale-105 transition-[transform,opacity] duration-700 ease-out ${
+          isLoaded ? "opacity-100" : "opacity-0"
+        }`}
+      />
+    </div>
+  );
+}
 
 export default CaseStudiesPage;

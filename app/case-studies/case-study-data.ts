@@ -6,10 +6,8 @@ import MinistryOfCultureSaudiArabiaImage2 from "@/public/images/projects/ksa/02.
 import MinistryOfCultureSaudiArabiaImage3 from "@/public/images/projects/ksa/03.jpg";
 import CielTowerImage1 from "@/public/images/projects/ciel/ciel-1.png";
 import CielTowerImage2 from "@/public/images/projects/ciel/ciel-2.png";
-import CielTowerImage3 from "@/public/images/projects/ciel/ciel-3.png";
 import AtTheTopFloorLEDImage1 from "@/public/images/projects/at-the-top/at-the-top-1.png";
-import RabatStadiumImage1 from "@/public/images/projects/rabat-stadium/rabat-1.png";
-import RabatStadiumImage2 from "@/public/images/projects/rabat-stadium/rabat-2.png";
+import RabatStadiumImage1 from "@/public/images/projects/rabat-stadium/rabat-1.jpg";
 
 export interface CaseStudyMedia {
   src: string;
@@ -140,7 +138,7 @@ export const caseStudyDetails: Record<string, CaseStudyDetail> = {
     tag: "Interactive Content",
     serviceFilter: "Custom Experiences",
     color: "text-purple-300",
-    cardImage: CielTowerImage3.src,
+    cardImage: CielTowerImage2.src,
     category: "Interactive Content",
     year: "2025",
     heroImage: CielTowerImage1.src,
@@ -161,6 +159,12 @@ export const caseStudyDetails: Record<string, CaseStudyDetail> = {
     link: "",
     media: [
       {
+        src: "/images/projects/ciel/ciel-landscape.mp4",
+        type: "video",
+        label: "Video Sequence",
+        description: "Cinematic landscape animation pass",
+      },
+      {
         src: CielTowerImage1.src,
         label: "Hero Frame",
         description: "Main tower composition and atmospheric mood",
@@ -169,11 +173,6 @@ export const caseStudyDetails: Record<string, CaseStudyDetail> = {
         src: CielTowerImage2.src,
         label: "Environment Integration",
         description: "Interactive wall content integrated in interior space",
-      },
-      {
-        src: CielTowerImage3.src,
-        label: "Detail View",
-        description: "Close-up of visual texture and display experience",
       },
     ],
   },
@@ -261,7 +260,7 @@ export const caseStudyDetails: Record<string, CaseStudyDetail> = {
         description: "Architectural lighting pass",
       },
       {
-        src: "/images/projects/rabat-stadium/rabat-5.mp4",
+        src: "/images/projects/rabat-stadium/rabat-3.mp4",
         type: "video",
         label: "Video 03",
         description: "Performance variant",

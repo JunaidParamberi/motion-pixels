@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import ServiceCard from "../components/ServiceCard";
 import dynamic from "next/dynamic";
@@ -19,6 +20,7 @@ const ParticlesBackground = dynamic(
 const serviceImages = [experianceImg, vfxImg, architactureImg] as const;
 
 const ServicePage = () => {
+  const [videoFailed, setVideoFailed] = useState(false);
   const services = servicesListing.map((item, index) => ({
     ...item,
     image: serviceImages[index],
@@ -38,17 +40,30 @@ const ServicePage = () => {
         animate={{ scale: 1 }}
         transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
-        <video
-          autoPlay
-          src="/video/irefly-experience.mp4"
-          className="object-cover w-full h-full"
-          muted
-          loop
-          playsInline
-          preload="none"
-          poster={sampleImage.src}
-          style={{ opacity: 0.7 }}
-        />
+        {videoFailed ? (
+          <Image
+            src={sampleImage}
+            alt="Services background"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover w-full h-full"
+            style={{ opacity: 0.7 }}
+          />
+        ) : (
+          <video
+            autoPlay
+            src="/video/irefly-experience.mp4"
+            className="object-cover w-full h-full"
+            muted
+            loop
+            playsInline
+            preload="none"
+            poster={sampleImage.src}
+            style={{ opacity: 0.7 }}
+            onError={() => setVideoFailed(true)}
+          />
+        )}
       </motion.div>
       <div className="fixed inset-0 bg-black opacity-60 -z-10" />
       <motion.h1

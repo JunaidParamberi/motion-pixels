@@ -300,17 +300,17 @@ export function CaseStudyDetailContent({ project }: CaseStudyDetailContentProps)
             },
           }}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6">
             {mediaItems.map((item, index) => (
               <MotionDiv
                 key={item.id}
-                className={getGalleryTileClass(index)}
+                className="relative w-full aspect-video overflow-hidden cursor-pointer group"
                 variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } }}
                 transition={{ duration: 0.5, ease }}
                 onClick={() => openViewerAt(index)}
                 data-cursor="zoom"
               >
-                <GalleryMediaCell item={item} layout={getGalleryTileLayout(index)} />
+                <GalleryMediaCell item={item} />
               </MotionDiv>
             ))}
           </div>
@@ -388,27 +388,7 @@ export function CaseStudyDetailContent({ project }: CaseStudyDetailContentProps)
                       }`}
                     >
                       <div className="relative w-28 h-16 md:w-32 md:h-18 bg-white/5">
-                        {item.type === "image" ? (
-                          <Image
-                            src={item.src}
-                            alt={item.label}
-                            fill
-                            unoptimized
-                            loading="eager"
-                            sizes="128px"
-                            className="object-cover"
-                          />
-                        ) : (
-                          <video
-                            src={item.src}
-                            className="w-full h-full object-cover"
-                            autoPlay
-                            muted
-                            loop
-                            playsInline
-                            preload="metadata"
-                          />
-                        )}
+                        <ThumbnailMedia item={item} />
                       </div>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                       <span className="absolute left-2 bottom-2 text-[10px] uppercase tracking-[0.2em] text-white/80">
@@ -426,6 +406,64 @@ export function CaseStudyDetailContent({ project }: CaseStudyDetailContentProps)
   );
 }
 
+function ThumbnailMedia({ item }: { item: GalleryMediaItem }) {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
+
+  if (item.type === "image" || videoFailed) {
+    return (
+      <>
+        {!isLoaded && (
+          <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-white/10 via-white/5 to-white/10" />
+        )}
+        <Image
+          src={item.type === "image" ? item.src : item.poster ?? item.src}
+          alt={item.label}
+          fill
+          unoptimized
+          loading="eager"
+          sizes="128px"
+          onLoadingComplete={() => setIsLoaded(true)}
+          className={`object-cover transition-opacity duration-400 ${
+            isLoaded ? "opacity-100" : "opacity-0"
+          }`}
+        />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Image
+        src={item.poster ?? item.src}
+        alt={item.label}
+        fill
+        unoptimized
+        loading="eager"
+        sizes="128px"
+        className="object-cover"
+      />
+      <video
+        src={item.src}
+        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-400 ${
+          isLoaded ? "opacity-100" : "opacity-0"
+        }`}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        poster={item.poster}
+        onLoadedMetadata={() => setIsLoaded(true)}
+        onError={() => {
+          setVideoFailed(true);
+          setIsLoaded(true);
+        }}
+      />
+    </>
+  );
+}
+
 type GalleryMediaItem = {
   id: string;
   type: "image" | "video";
@@ -435,28 +473,19 @@ type GalleryMediaItem = {
   poster?: string;
 };
 
-function getGalleryTileLayout(index: number): "video" | "square" | "wide" {
-  if (index === 0) return "video";
-  if (index % 3 === 0) return "wide";
-  return "square";
-}
-
-function getGalleryTileClass(index: number): string {
-  const base = "relative overflow-hidden cursor-pointer group";
-  if (index === 0) return `${base} md:col-span-2 aspect-video`;
-  if (index % 3 === 0) return `${base} md:col-span-2 aspect-video`;
-  return `${base} aspect-square`;
-}
-
 function GalleryMediaCell({
   item,
-  layout,
 }: {
   item: GalleryMediaItem;
-  layout: "video" | "square" | "wide";
 }) {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
+
   return (
     <>
+      {!isLoaded && item.type === "image" && (
+        <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-white/10 via-white/5 to-white/10" />
+      )}
       {item.type === "image" ? (
         <Image
           src={item.src}
@@ -465,18 +494,55 @@ function GalleryMediaCell({
           unoptimized
           loading="eager"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover w-full h-full"
+          onLoadingComplete={() => setIsLoaded(true)}
+          className={`object-cover w-full h-full transition-opacity duration-500 ${
+            isLoaded ? "opacity-100" : "opacity-0"
+          }`}
         />
       ) : (
-        <video
-          src={item.src}
-          className="absolute inset-0 w-full h-full object-cover"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-        />
+        videoFailed ? (
+          <Image
+            src={item.poster ?? item.src}
+            alt={item.label}
+            fill
+            unoptimized
+            loading="eager"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            onLoadingComplete={() => setIsLoaded(true)}
+            className={`object-cover w-full h-full transition-opacity duration-500 ${
+              isLoaded ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        ) : (
+          <>
+            <Image
+              src={item.poster ?? item.src}
+              alt={item.label}
+              fill
+              unoptimized
+              loading="eager"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover w-full h-full"
+            />
+            <video
+              src={item.src}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+                isLoaded ? "opacity-100" : "opacity-0"
+              }`}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              poster={item.poster}
+              onLoadedMetadata={() => setIsLoaded(true)}
+              onError={() => {
+                setVideoFailed(true);
+                setIsLoaded(true);
+              }}
+            />
+          </>
+        )
       )}
     </>
   );
@@ -495,6 +561,7 @@ interface CarouselMediaProps {
 
 function CarouselMedia({ item }: CarouselMediaProps) {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
 
   return (
     <motion.div
@@ -509,9 +576,9 @@ function CarouselMedia({ item }: CarouselMediaProps) {
         <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-white/5 via-white/10 to-white/5" />
       )}
 
-      {item.type === "image" ? (
+      {item.type === "image" || videoFailed ? (
         <Image
-          src={item.src}
+          src={item.type === "image" ? item.src : item.poster ?? item.src}
           alt={item.label}
           fill
           unoptimized
@@ -535,7 +602,11 @@ function CarouselMedia({ item }: CarouselMediaProps) {
           playsInline
           preload="metadata"
           poster={item.poster}
-          onLoadedData={() => setIsLoaded(true)}
+          onLoadedMetadata={() => setIsLoaded(true)}
+          onError={() => {
+            setVideoFailed(true);
+            setIsLoaded(true);
+          }}
         />
       )}
 

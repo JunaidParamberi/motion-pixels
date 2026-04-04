@@ -39,10 +39,10 @@ export const metadata: Metadata = {
     locale: "en_US",
     images: [
       {
-        url: "/next.svg",
-        width: 512,
-        height: 512,
-        alt: "Motion Pixels",
+        url: "/embed-img.png",
+        width: 2932,
+        height: 1590,
+        alt: "Motion Pixels showcase",
       },
     ],
   },
@@ -51,6 +51,7 @@ export const metadata: Metadata = {
     title: "Motion Pixels",
     description:
       "Cinematic VFX, AI-powered content, immersive experiences, and architectural visualization.",
+    images: ["/embed-img.png"],
   },
   robots: {
     index: true,
@@ -64,8 +65,9 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/next.svg",
-    shortcut: "/next.svg",
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
   },
   category: "technology",
 };
