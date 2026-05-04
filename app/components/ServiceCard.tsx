@@ -4,7 +4,7 @@ import React, { useRef, useState } from "react";
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import serviceImage from "../Assets/Images/services/bg3.jpg";
 
 interface ServiceCardProps {
@@ -32,8 +32,8 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const rotateX = useSpring(mouseY, { stiffness: 300, damping: 30 });
-  const rotateY = useSpring(mouseX, { stiffness: 300, damping: 30 });
+  const rotateX = useSpring(mouseY, { stiffness: 200, damping: 30 });
+  const rotateY = useSpring(mouseX, { stiffness: 200, damping: 30 });
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -58,233 +58,151 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
     const rect = cardRef.current.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
-    mouseX.set(y * -6);
-    mouseY.set(x * 6);
+    mouseX.set(y * -5);
+    mouseY.set(x * 5);
   };
 
   const indexLabel = String(index + 1).padStart(2, "0");
-  const categoryLabel = alt || "Service";
 
   const CardContent = (
     <motion.div
       ref={cardRef}
-      className="group w-full relative overflow-hidden cursor-pointer rounded-none"
+      className="group w-full relative overflow-hidden cursor-pointer"
       style={{
-        height: "clamp(210px, 24vw, 260px)",
-        minHeight: 210,
+        height: "clamp(280px, 30vw, 420px)",
         rotateX,
         rotateY,
         transformStyle: "preserve-3d",
-        perspective: 1000,
+        perspective: 1200,
       } as React.CSSProperties}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onMouseMove={handleMouseMove}
-      initial={{ opacity: 0, y: 36 }}
       whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 36 }}
       viewport={{ once: true, margin: "-60px", amount: 0.15 }}
-      transition={{
-        duration: 0.6,
-        ease: [0.25, 0.46, 0.45, 0.94],
-      }}
-      whileHover={{
-        y: -8,
-        transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] },
-      }}
-      whileTap={{ scale: 0.99 }}
+      transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
     >
+      {/* Image */}
       <motion.div
-        className="absolute inset-0 rounded-none overflow-hidden"
-        initial={false}
+        className="absolute inset-0"
+        animate={{ scale: isHovered ? 1.06 : 1 }}
+        transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+      >
+        <Image
+          src={image || serviceImage}
+          alt={alt || "Service"}
+          fill
+          className="object-cover"
+          placeholder="blur"
+          sizes="(max-width: 768px) 100vw, 80vw"
+        />
+        {videoSrc && isHovered && (
+          <video
+            ref={videoRef}
+            src={videoSrc}
+            className="absolute inset-0 w-full h-full object-cover"
+            muted
+            loop
+            playsInline
+          />
+        )}
+      </motion.div>
+
+      {/* Gradient overlay */}
+      <div
+        className="absolute inset-0 transition-opacity duration-500"
+        style={{
+          background:
+            "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.45) 40%, rgba(0,0,0,0.15) 70%, transparent 100%)",
+          opacity: isHovered ? 1 : 0.85,
+        }}
+      />
+
+      {/* Left accent line */}
+      <motion.div
+        className="absolute left-0 top-0 bottom-0 w-[2px] origin-bottom"
         animate={{
-          scale: isHovered ? 1.03 : 1,
-          boxShadow: isHovered
-            ? "0 32px 64px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06)"
-            : "0 4px 24px -4px rgba(0,0,0,0.3)",
+          scaleY: isHovered ? 1 : 0.3,
+          backgroundColor: isHovered ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.3)",
         }}
         transition={{ duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
-      >
-        {/* Media */}
-        <div className="absolute inset-0 z-0">
+      />
+
+      {/* Top-left: index + category */}
+      <div className="absolute top-5 left-6 flex items-baseline gap-3">
+        <span className="text-white font-black tabular-nums leading-none select-none"
+          style={{ fontSize: "clamp(1.8rem, 3vw, 3rem)", opacity: isHovered ? 0.2 : 0.4 }}>
+          {indexLabel}
+        </span>
+        {alt && (
+          <span className="text-[9px] tracking-[0.35em] uppercase text-white/40 font-medium">
+            {alt}
+          </span>
+        )}
+      </div>
+
+      {/* Bottom content */}
+      <div className="absolute bottom-0 left-0 right-0 px-6 pb-6 pt-20">
+        <div className="relative">
+          {/* Title underline on hover */}
           <motion.div
-            className="absolute inset-0"
-            initial={false}
-            animate={{ scale: isHovered ? 1.1 : 1 }}
-            transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-          >
-            <Image
-              src={image || serviceImage}
-              alt={alt || "Service"}
-              fill
-              className="object-cover"
-              placeholder="blur"
-              sizes="(max-width: 768px) 100vw, 80vw"
-            />
-          </motion.div>
-          <AnimatePresence mode="wait">
-            {videoSrc && isHovered ? (
-              <motion.div
-                key="video"
-                className="absolute inset-0"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.45 }}
-              >
-                <video
-                  ref={videoRef}
-                  src={videoSrc}
-                  className="object-cover w-full h-full"
-                  style={{ objectFit: "cover", width: "100%", height: "100%" }}
-                  muted
-                  loop
-                  playsInline
-                />
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
-        </div>
-
-        {/* Overlay gradient - dark at bottom for text, stacked first so it stays behind shine */}
-        <motion.div
-          className="absolute inset-0 z-10 pointer-events-none rounded-none"
-          style={{
-            background:
-              "linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.4) 35%, transparent 65%), linear-gradient(135deg, rgba(0,0,0,0.5) 0%, transparent 55%)",
-          }}
-          initial={false}
-          animate={{ opacity: isHovered ? 0.92 : 1 }}
-          transition={{ duration: 0.35 }}
-        />
-
-        {/* Hover shine - subtle diagonal highlight, above overlay */}
-        <motion.div
-          className="absolute inset-0 z-[11] pointer-events-none rounded-none"
-          initial={false}
-          animate={{ opacity: isHovered ? 1 : 0 }}
-          transition={{ duration: 0.5 }}
-          style={{
-            background:
-              "linear-gradient(115deg, transparent 0%, transparent 45%, rgba(255,255,255,0.07) 55%, transparent 70%, transparent 100%)",
-          }}
-        />
-
-        {/* Left accent - violet tint on hover */}
-        <motion.div
-          className="absolute left-0 top-0 bottom-0 w-1 z-20 rounded-none origin-bottom"
-          initial={false}
-          animate={{
-            scaleY: isHovered ? 1 : 0.35,
-            backgroundColor: isHovered ? "rgba(139, 92, 246, 0.7)" : "rgba(255,255,255,0.5)",
-          }}
-          transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-        />
-
-        {/* Index + category row */}
-        <div className="absolute top-4 left-4 z-20 flex items-baseline gap-2.5 md:top-6 md:left-7">
-          <motion.span
-            className="text-white/35 font-black text-2xl md:text-4xl tabular-nums tracking-tighter select-none"
-            initial={false}
-            animate={{ opacity: isHovered ? 0.25 : 0.5 }}
-            transition={{ duration: 0.3 }}
-          >
-            {indexLabel}
-          </motion.span>
-          <motion.span
-            className="hidden sm:inline-flex text-[10px] md:text-xs font-semibold uppercase tracking-[0.2em] text-white/50 border border-white/25 rounded-full px-2.5 py-0.5"
-            initial={false}
-            animate={{ opacity: isHovered ? 0.9 : 0.6, borderColor: isHovered ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.25)" }}
-            transition={{ duration: 0.3 }}
-          >
-            {categoryLabel}
-          </motion.span>
-        </div>
-
-        {/* Content */}
-        <div className="absolute inset-0 z-20 flex flex-col items-start justify-end p-4 sm:p-6 md:p-8 pb-5 sm:pb-6 md:pb-8">
-          <motion.div
-            className="w-full pr-12 sm:pr-20"
-            initial={false}
-            animate={{ y: isHovered ? 0 : 6 }}
-            transition={{ duration: 0.35 }}
-          >
-            <div className="relative inline-block pb-1">
-              <motion.h2
-                className="text-white text-2xl sm:text-3xl md:text-4xl font-black uppercase tracking-tight leading-[1.05] drop-shadow-[0_2px_20px_rgba(0,0,0,0.5)]"
-                initial={false}
-                animate={{ filter: isHovered ? "brightness(1.08)" : "brightness(1)" }}
-                transition={{ duration: 0.3 }}
-              >
-                {title || "Service Title"}
-              </motion.h2>
-              <motion.span
-                className="absolute left-0 bottom-0 h-0.5 bg-white/80 rounded-full origin-left"
-                initial={false}
-                animate={{ scaleX: isHovered ? 1 : 0 }}
-                transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-                style={{ width: "100%" }}
-              />
-            </div>
-            <motion.p
-              className="text-white/90 text-xs sm:text-sm md:text-base font-medium max-w-xl leading-snug pt-1.5 sm:pt-2 drop-shadow-[0_1px_8px_rgba(0,0,0,0.4)] [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] sm:[-webkit-line-clamp:3] overflow-hidden"
-              initial={false}
-              animate={{
-                opacity: isHovered ? 1 : 0.88,
-                y: isHovered ? 0 : 6,
-              }}
-              transition={{ duration: 0.35, delay: isHovered ? 0.05 : 0 }}
-            >
-              {subText || "Service Subtitle"}
-            </motion.p>
-          </motion.div>
-
-          {/* Bottom progress line */}
-          <motion.div
-            className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/20 rounded-none origin-left z-20"
-            initial={false}
+            className="absolute -bottom-1 left-0 h-[1px] bg-white/70 origin-left"
+            style={{ width: "100%" }}
             animate={{ scaleX: isHovered ? 1 : 0 }}
             transition={{ duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
           />
-          <motion.div
-            className="absolute bottom-0 left-0 right-0 h-0.5 bg-violet-400/90 rounded-none origin-left z-20"
-            initial={false}
-            animate={{ scaleX: isHovered ? 1 : 0 }}
-            transition={{ duration: 0.5, delay: 0.05, ease: [0.25, 0.46, 0.45, 0.94] }}
-          />
-
-          {/* CTA - always visible when link exists, stronger on hover */}
-          {link && (
-            <motion.span
-              className="absolute bottom-5 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 z-30 flex items-center gap-1.5 sm:gap-2 text-white font-semibold text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-widest"
-              initial={false}
-              animate={{
-                opacity: isHovered ? 1 : 0.5,
-                x: isHovered ? 0 : 0,
-              }}
-              transition={{ duration: 0.25 }}
-            >
-              <span className="hidden sm:inline">{isHovered ? "Explore" : "View"}</span>
-              <motion.span
-                animate={{ x: isHovered ? [0, 4, 0] : 0 }}
-                transition={{ duration: 1.2, repeat: isHovered ? Infinity : 0, ease: "easeInOut" }}
-                className="inline-flex"
-              >
-                <ArrowRight className="w-4 h-4" aria-hidden />
-              </motion.span>
-            </motion.span>
-          )}
+          <h2
+            className="text-white font-black uppercase tracking-tight leading-[1.05] drop-shadow-[0_2px_20px_rgba(0,0,0,0.6)]"
+            style={{ fontSize: "clamp(1.6rem, 2.8vw, 2.8rem)" }}
+          >
+            {title}
+          </h2>
         </div>
 
-        {/* Border */}
+        <motion.p
+          className="text-white/70 text-sm md:text-base leading-snug mt-3 max-w-2xl line-clamp-2"
+          animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 8 }}
+          transition={{ duration: 0.35, delay: isHovered ? 0.05 : 0 }}
+        >
+          {subText}
+        </motion.p>
+      </div>
+
+      {/* CTA */}
+      {link && (
         <motion.div
-          className="absolute inset-0 z-5 pointer-events-none rounded-none border border-white/[0.08]"
-          initial={false}
-          animate={{
-            borderColor: isHovered ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.08)",
-          }}
-          transition={{ duration: 0.35 }}
-        />
-      </motion.div>
+          className="absolute bottom-6 right-6 flex items-center gap-2 text-white"
+          animate={{ opacity: isHovered ? 1 : 0.35 }}
+          transition={{ duration: 0.25 }}
+        >
+          <span className="text-[10px] tracking-[0.3em] uppercase font-semibold hidden sm:block">
+            {isHovered ? "Explore" : "View"}
+          </span>
+          <motion.span
+            animate={{ x: isHovered ? [0, 5, 0] : 0 }}
+            transition={{ duration: 1.2, repeat: isHovered ? Infinity : 0, ease: "easeInOut" }}
+          >
+            <ArrowRight className="w-4 h-4" />
+          </motion.span>
+        </motion.div>
+      )}
+
+      {/* Bottom progress bar */}
+      <motion.div
+        className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/80 origin-left"
+        animate={{ scaleX: isHovered ? 1 : 0 }}
+        transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+      />
+
+      {/* Border */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none border"
+        animate={{
+          borderColor: isHovered ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.06)",
+        }}
+        transition={{ duration: 0.35 }}
+      />
     </motion.div>
   );
 
@@ -292,7 +210,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
     return (
       <Link
         href={link}
-        className="w-full block focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-none"
+        className="w-full block focus:outline-none focus-visible:ring-1 focus-visible:ring-white/40"
       >
         {CardContent}
       </Link>
