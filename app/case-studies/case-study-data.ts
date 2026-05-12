@@ -325,10 +325,10 @@ export const caseStudyDetails: Record<string, CaseStudyDetail> = {
     tag: "Immersive Projection",
     serviceFilter: "Custom Experiences",
     color: "text-emerald-400",
-    cardImage: "/images/projects/reem-mall-projection/card.png",
+    cardImage: "/images/projects/reem-mall-projection/hero-installation.jpg",
     category: "Immersive Installation",
     year: "2025",
-    heroImage: "/images/projects/reem-mall-projection/hero-installation.png",
+    heroImage: "/images/projects/reem-mall-projection/hero-installation.jpg",
     overview:
       "A wide-format projection experience for Reem Mall, developed with BE Creative: jungle-themed digital content aligned with scenic wall treatments so the screen reads as part of the environment, not a bolted-on display.",
     challenge: [
@@ -347,16 +347,28 @@ export const caseStudyDetails: Record<string, CaseStudyDetail> = {
     link: "",
     media: [
       {
-        src: "/images/projects/reem-mall-projection/hero-installation.png",
+        src: "/images/projects/reem-mall-projection/hero-installation.jpg",
         label: "Installation view",
         description:
           "On-site environment: wide projection surface set into a jungle mural room with controlled ceiling lighting and human scale for context.",
       },
       {
-        src: "/images/projects/reem-mall-projection/artwork-detail.png",
+        src: "/images/projects/reem-mall-projection/artwork-detail.jpg",
         label: "Digital artwork",
         description:
-          "Hero projection frame: lush jungle landscape with central elephant, waterfalls, mist, and flowering trees — replace this file with your final isolated artwork asset when ready.",
+          "Hero projection frame: elephant in misty jungle clearing, integrated screen with mural wrap and waterfall cues along the wall.",
+      },
+      {
+        src: "/images/projects/reem-mall-projection/mural-room-progress.jpg",
+        label: "Mural integration",
+        description:
+          "Early fit-out: continuous landscape wrap across walls and central pillar, screen panel balanced with scenic paint so the volume reads as one scene.",
+      },
+      {
+        src: "/images/projects/reem-mall-projection/nature-zone-production.jpg",
+        label: "On-site documentation",
+        description:
+          "Nature branded zone in the mall with turf foreground, plus camera capture (4K / S-Log3) for hero stills and promotional cut-downs.",
       },
     ],
   },
@@ -367,10 +379,10 @@ export const caseStudyDetails: Record<string, CaseStudyDetail> = {
     tag: "Façade LED",
     serviceFilter: "Architectural Visualization",
     color: "text-red-400",
-    cardImage: "/images/projects/beeah-hq/card.png",
+    cardImage: "/images/projects/Beeah/2.jpg",
     category: "Façade Lighting & LED Media",
     year: "2020",
-    heroImage: "/images/projects/beeah-hq/hero.png",
+    heroImage: "/images/projects/beeah-hq/hero.jpg",
     overview:
       "Façade LED and playback content for BEE'AH HQ: media aligned to the building skin, developed for how the installation reads from a top-down / aerial viewpoint as well as oblique street views. Credits: designed and executed while working with 3S Lighting Solutions.",
     challenge: [
@@ -389,16 +401,23 @@ export const caseStudyDetails: Record<string, CaseStudyDetail> = {
     link: "",
     media: [
       {
-        src: "/images/projects/beeah-hq/artboard-01.png",
-        label: "Plan view — artboard",
+        src: "/images/projects/beeah-hq/day-aerial.jpg",
+        label: "Site — daytime aerial",
         description:
-          "Project board showing context from above: how façade LED and content read in top-down composition, with graphic studies tied to the lit envelope.",
+          "Wide aerial view of the dune-form HQ with pools and desert context — useful for reading scale and landscape integration.",
       },
       {
-        src: "/images/projects/beeah-hq/artboard-02.png",
-        label: "LED content direction",
+        src: "/images/projects/beeah-hq/facade-night-plan.jpg",
+        label: "Façade LED — night (plan)",
         description:
-          "Additional frame for façade LED sequences or stills from the same top-down vantage — replace when you have the next export.",
+          "Top-down night photograph: UAE-inspired LED stripes following the roof curves, read from above.",
+      },
+      {
+        src: "/images/projects/beeah-hq/banner.mp4",
+        type: "video",
+        label: "Banner reel",
+        description:
+          "Façade playback / banner piece aligned to the lit envelope.",
       },
     ],
   },
