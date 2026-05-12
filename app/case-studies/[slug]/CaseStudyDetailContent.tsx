@@ -447,12 +447,14 @@ function GalleryMediaCell({
   presentation = "grid",
 }: {
   item: GalleryMediaItem;
-  /** `column`: Behance-style letterbox in frame; `grid`: dense cover crop */
+  /** `column`: letterbox stills; videos always cover the frame; `grid`: dense cover crop */
   presentation?: "grid" | "column";
 }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [videoFailed, setVideoFailed] = useState(false);
   const fit = presentation === "column" ? "object-contain" : "object-cover";
+  /** Poster + video must both cover; otherwise `object-contain` letterboxing reveals a mismatched poster still. */
+  const videoFit = "object-cover";
   const sizes =
     presentation === "column"
       ? "(max-width: 768px) 100vw, min(1200px, 100vw)"
@@ -481,7 +483,7 @@ function GalleryMediaCell({
           loading="eager"
           sizes={sizes}
           onLoadingComplete={() => setIsLoaded(true)}
-          className={`${fit} w-full h-full transition-opacity duration-500 ${isLoaded ? "opacity-100" : "opacity-0"}`}
+          className={`${videoFit} w-full h-full transition-opacity duration-500 ${isLoaded ? "opacity-100" : "opacity-0"}`}
         />
       ) : (
         <>
@@ -492,11 +494,11 @@ function GalleryMediaCell({
             unoptimized
             loading="eager"
             sizes={sizes}
-            className={`${fit} w-full h-full`}
+            className={`${videoFit} w-full h-full`}
           />
           <video
             src={item.src}
-            className={`absolute inset-0 w-full h-full ${fit} transition-opacity duration-500 ${isLoaded ? "opacity-100" : "opacity-0"}`}
+            className={`absolute inset-0 w-full h-full ${videoFit} transition-opacity duration-500 ${isLoaded ? "opacity-100" : "opacity-0"}`}
             autoPlay
             muted
             loop
