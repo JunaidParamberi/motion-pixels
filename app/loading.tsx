@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Icon from "./Assets/Logo/Icon.png";
+import { Analytics } from "@vercel/analytics/next"
 
 export default function Loading() {
   return (
@@ -46,6 +47,7 @@ export default function Loading() {
         animate={{ x: "100%" }}
         transition={{ duration: 0.85, ease: [0.33, 1, 0.68, 1] }}
       />
+      <Analytics />
     </div>
   );
 }

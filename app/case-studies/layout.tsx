@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Case Studies",
+  title: {
+    absolute: "Motion Pixels | Case Studies",
+  },
   description:
     "Browse Motion Pixels case studies across immersive installations, AI storytelling, and architectural media projects.",
   alternates: {
