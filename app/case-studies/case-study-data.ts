@@ -44,7 +44,12 @@ export interface CaseStudyDetail {
   link?: string;
 }
 
-export const disabledCaseStudySlugs = ["ciel-tower", "draft-project"] as const;
+export const disabledCaseStudySlugs = [
+  "ciel-tower",
+  "draft-project",
+  "difc-gate",
+  "sabic-hq",
+] as const;
 
 export const caseStudyDetails: Record<string, CaseStudyDetail> = {
   /** Template: disabled until copy + `/public/images/projects/<slug>/` assets are ready. */
