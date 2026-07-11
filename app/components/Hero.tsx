@@ -4,7 +4,6 @@ import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import coverImg from "../Assets/Images/Home/Cover_1.jpg";
-import { heroData } from "@/app/data/site-data";
 import "@/public/fonts/Neusharp/Neusharp-Black.css";
 
 const HERO_BLUR_PLACEHOLDER =
@@ -13,13 +12,13 @@ const HERO_BLUR_PLACEHOLDER =
 const Hero = () => {
   return (
     <motion.div
-      className="relative h-screen w-full hero"
+      className="relative h-screen w-full hero overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
     >
       <motion.div
-        className="absolute inset-0"
+        className="fixed inset-0 -z-10"
         initial={{ scale: 1.08 }}
         animate={{ scale: 1 }}
         transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
@@ -27,9 +26,10 @@ const Hero = () => {
         <Image
           src={coverImg}
           alt="Cover Image"
-          className="object-cover w-full h-full"
+          className="object-cover object-[62%_center] sm:object-center w-full h-full"
           priority
           fill
+          sizes="100vw"
           placeholder="blur"
           blurDataURL={HERO_BLUR_PLACEHOLDER}
         />
@@ -45,7 +45,7 @@ const Hero = () => {
             ease: [0.25, 0.46, 0.45, 0.94],
           }}
         >
-          {heroData.titleLine1} <br /> {heroData.titleLine2}
+          Immersive Design <br /> for the Future
         </motion.h1>
       </div>
     </motion.div>

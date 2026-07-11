@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Gallery placeholder 2">
+  <defs>
+    <linearGradient id="g2" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0e0e0e"/>
+      <stop offset="100%" stop-color="#121212"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#g2)"/>
+  <text x="50%" y="50%" fill="rgba(255,255,255,0.11)" font-family="system-ui,Segoe UI,sans-serif" font-size="26" font-weight="600" text-anchor="middle" dominant-baseline="middle">Gallery 02</text>
+</svg>

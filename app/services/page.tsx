@@ -3,18 +3,12 @@
 import React from "react";
 import { motion } from "framer-motion";
 import ServiceCard from "../components/ServiceCard";
-import dynamic from "next/dynamic";
+import PageContainer from "../components/PageContainer";
 import { servicesListing } from "@/app/data/site-data";
 
-import sampleImage from "../Assets/Images/services/Screenshot 2025-05-19 at 12.54.53 AM.png";
 import experianceImg from "../Assets/Images/services/Experiance_img.jpg";
 import vfxImg from "../Assets/Images/services/VFX_img.jpg";
 import architactureImg from "../Assets/Images/services/Architectural_Img.jpg";
-
-const ParticlesBackground = dynamic(
-  () => import("../components/ParticlesBackground"),
-  { ssr: false, loading: () => null }
-);
 
 const serviceImages = [experianceImg, vfxImg, architactureImg] as const;
 
@@ -25,50 +19,34 @@ const ServicePage = () => {
   }));
 
   return (
-    <motion.div
-      className="w-full flex flex-col items-center justify-center min-h-screen gap-8 py-30 container mx-auto px-4 relative"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <ParticlesBackground />
-      <motion.div
-        className="fixed inset-0 -z-20 overflow-hidden [will-change:transform]"
-        initial={{ scale: 1.08 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
-      >
-        <video
-          autoPlay
-          src="/video/irefly-experience.mp4"
-          className="object-cover w-full h-full"
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          poster={sampleImage.src}
-          style={{ opacity: 0.7 }}
-        />
-      </motion.div>
-      <div className="fixed inset-0 bg-black opacity-60 -z-10" />
-      <motion.h1
-        className="text-white text-4xl md:text-6xl font-extrabold text-left w-full leading-tight"
+    <PageContainer className="flex flex-col">
+
+      {/* ── Header ───────────────────────────────────────── */}
+      <motion.section
+        className="pb-16 border-b border-white/10"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
+        transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
-        What We Do
-      </motion.h1>
+        <span className="block text-[10px] tracking-[0.45em] text-white/30 uppercase mb-8">
+          Services — Motion Pixels
+        </span>
+        <h1
+          className="font-black text-white leading-none tracking-tight"
+          style={{ fontSize: "clamp(3.5rem, 9vw, 7.5rem)" }}
+        >
+          What We<br />Do<span className="text-white/15">.</span>
+        </h1>
+      </motion.section>
 
-      <motion.div
-        className="w-full flex-col flex gap-6 justify-center"
+      {/* ── Cards ────────────────────────────────────────── */}
+      <motion.section
+        className="py-14 flex flex-col gap-5"
         initial="hidden"
         animate="visible"
         variants={{
           hidden: {},
-          visible: {
-            transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-          },
+          visible: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
         }}
       >
         {services.map((service, index) => (
@@ -93,8 +71,9 @@ const ServicePage = () => {
             />
           </motion.div>
         ))}
-      </motion.div>
-    </motion.div>
+      </motion.section>
+
+    </PageContainer>
   );
 };
 

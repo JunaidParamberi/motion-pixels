@@ -1,144 +1,155 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { motion } from "framer-motion";
+import React, { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
+import { caseStudyDetails, disabledCaseStudySlugs } from "./case-study-data";
+import type { CaseStudyDetail } from "./case-study-data";
+import PageContainer from "../components/PageContainer";
+
+type CaseStudyCard = Pick<
+  CaseStudyDetail,
+  "slug" | "title" | "subtitle" | "tag" | "color" | "cardImage" | "year"
+>;
+
+const caseStudyCards: CaseStudyCard[] = Object.values(caseStudyDetails)
+  .filter((detail) => !disabledCaseStudySlugs.includes(detail.slug as (typeof disabledCaseStudySlugs)[number]))
+  .map((detail) => ({
+    slug: detail.slug,
+    title: detail.title,
+    subtitle: detail.subtitle,
+    tag: detail.tag,
+    color: detail.color,
+    cardImage: detail.cardImage,
+    year: detail.year,
+  }));
+
+const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
 const CaseStudiesPage = () => {
-  useEffect(() => {
-    document.documentElement.classList.add("dark");
-  }, []);
-
   return (
-    <motion.div
-      className="bg-background-light dark:bg-background-dark text-gray-900 dark:text-white font-sans antialiased min-h-screen flex flex-col transition-colors duration-300"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <main className="flex-grow relative">
-        <motion.div
-          className="fixed inset-0 -z-10 bg-background-dark overflow-hidden [will-change:transform]"
-          initial={{ scale: 1.08 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+    <PageContainer className="flex flex-col">
+
+      {/* ── Header ───────────────────────────────────────── */}
+      <motion.section
+        className="pb-16 border-b border-white/10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.55, ease }}
+      >
+        <span className="block text-[10px] tracking-[0.45em] text-white/30 uppercase mb-8">
+          Work — Motion Pixels
+        </span>
+        <h1
+          className="font-black text-white leading-none tracking-tight"
+          style={{ fontSize: "clamp(3.5rem, 9vw, 7.5rem)" }}
         >
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?q=80&w=2080&auto=format&fit=crop')] bg-cover bg-center opacity-20 mix-blend-overlay" />
-          <div className="absolute inset-0 bg-gradient-to-b from-background-dark/80 via-background-dark/95 to-background-dark" />
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px]" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px]" />
-        </motion.div>
+          Case<br />Studies<span className="text-white/15">.</span>
+        </h1>
+      </motion.section>
 
-        <section className="pt-40 pb-16 px-6 md:px-12 max-w-7xl mx-auto">
-          <motion.h1
-            className="font-display font-black text-5xl md:text-7xl lg:text-8xl text-white uppercase tracking-tighter mb-4"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-          >
-            Case Studies
-          </motion.h1>
-          <motion.p
-            className="text-gray-400 text-lg md:text-xl max-w-2xl font-light leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            Exploring the intersection of technology and art. We craft
-            immersive digital experiences, visual effects, and interactive
-            installations that redefine reality.
-          </motion.p>
-
-          <motion.div
-            className="mt-12 flex flex-wrap gap-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-          >
-            {["All", "Immersive", "VFX", "Installations"].map((item, i) => (
-              <motion.button
-                key={i}
-                className={`px-4 py-1 text-sm tracking-widest border-b-2 uppercase font-medium transition-colors ${
-                  i === 0
-                    ? "border-white text-white"
-                    : "border-transparent text-gray-500 hover:text-white hover:border-gray-700"
-                }`}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                {item}
-              </motion.button>
-            ))}
-          </motion.div>
-        </section>
-
-        <section className="px-6 md:px-12 pb-24 max-w-7xl mx-auto">
-          <motion.div
-            className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6"
-            initial="hidden"
-            animate="visible"
-            variants={{
-              hidden: {},
-              visible: {
-                transition: { staggerChildren: 0.06, delayChildren: 0.2 },
-              },
-            }}
-          >
-            {[
-              {
-                title: "Neon Genesis",
-                tag: "Visual Effects",
-                color: "text-blue-400",
-                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAXHEw3WyPZGezWbor9LoFzHafofYNI0jlSDyOV7QHTEAu8mYAXu6BPna6YX5_gUF5GP8PiiBiypKjD0PjZWy47z10TTp0GN1FE_7ZnJkSvixhOyrncJhW0AraHQWSm7zRyXcmbJPeEqY3mkgc7nWMVPlGs6FfjPEMxPK21_jnlufi5oEWSRytRR8ftGQ1x2s8xTCqqlS_r8Db0mU9uP-CkeKRk0KgTajoCr8LabsmWoxaqI6BaohZAgEK3FnIQLM3U85EemvUUMo0Y",
-              },
-              {
-                title: "Core Matrix",
-                tag: "Data Viz",
-                color: "text-purple-400",
-                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAHGPvW9_8av1TOpuiHTarg0SbebvTQzTe2_GYfhCD8Fun_0uhUmYIkHK3Gj7wygMu8jydUO1WVannz2Oo2c8nFxwk7_5xjiMawYgMhPOMp7gqO8idHRCJVtL-Rsaa4jkxgTcsBymSsEnlSFROy9Wy1iUs-INnRMLZ4HVUragaYa8op5WCb6VkwdFQmwmZRSwvPe1kySKQ-KTvJM2KS1RkIRGo5On8lC_JtozD7nB-t-RdAR12wd-KqKBEjBnNEn43xfKuZzf6sE51B",
-              },
-              {
-                title: "Echoes of Tomorrow",
-                tag: "VR Experience",
-                color: "text-green-400",
-                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBH4v99ult_ZZ4LdYXmtlRASOnJN1FodT_oTaf8gx_X2sqBAUbZ_pDo2PAtAr9tCa9HBVkjCUvteTSRNgZtEh9YX0aX2cxZvJIF_zRv_dadMGPVhQMkoVGMYgAwjzpDJC8KeMVw6DLrIr84-W-sr7L_eGXWPkhjnDvUZ1pC5tiIDqcK-unienDIkdou8OKMPzskbMBdyZvrs9GnIm6-KUkcqGvKKa7dV5UAK6Nx6QT1XDxyipM0pJgG30Rkw3nVuTDhdPGRvDpTm6wO",
-              },
-            ].map((item, index) => (
+      {/* ── Grid ─────────────────────────────────────────── */}
+      <motion.section
+        className="py-14"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: {},
+          visible: { transition: { staggerChildren: 0.06, delayChildren: 0.2 } },
+        }}
+      >
+        <motion.div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <AnimatePresence mode="popLayout">
+            {caseStudyCards.map((item) => (
               <motion.div
-                key={index}
-                className="break-inside-avoid group relative overflow-hidden cursor-pointer"
+                key={item.slug}
+                layout
                 variants={{
                   hidden: { opacity: 0, y: 24 },
                   visible: {
                     opacity: 1,
                     y: 0,
-                    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+                    transition: { duration: 0.5, ease },
                   },
                 }}
-                whileHover={{ y: -4 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="h-full min-h-0"
               >
-                <img
-                  src={item.img}
-                  alt={item.title}
-                  className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
-                  <span
-                    className={`${item.color} text-xs font-bold tracking-widest uppercase mb-1`}
+                <Link
+                  href={`/case-studies/${item.slug}`}
+                  className="block h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                  data-cursor="zoom"
+                >
+                  <motion.article
+                    className="group flex h-full flex-col overflow-hidden border border-white/[0.08] bg-zinc-950 shadow-[0_0_0_1px_rgba(255,255,255,0.02)_inset]"
+                    whileHover={{ y: -4, borderColor: "rgba(255,255,255,0.16)" }}
+                    transition={{ duration: 0.35, ease }}
                   >
-                    {item.tag}
-                  </span>
-                  <h3 className="text-white font-display text-2xl font-bold uppercase tracking-wide">
-                    {item.title}
-                  </h3>
-                </div>
+                    <div className="relative shrink-0 overflow-hidden">
+                      <CaseStudyCardMedia src={item.cardImage} alt={item.title} />
+                    </div>
+
+                    <div className="relative flex h-[9.25rem] shrink-0 flex-col justify-between border-t border-white/10 bg-zinc-950 px-3 py-3.5 sm:h-[9.75rem] sm:px-4 sm:py-4">
+                      <div className="absolute left-0 top-0 h-full w-0.5 origin-bottom scale-y-0 bg-white/70 transition-transform duration-300 ease-out group-hover:scale-y-100" aria-hidden />
+                      <div className="flex h-4 items-center justify-between gap-3">
+                        <span className={`${item.color} truncate text-[8px] font-bold tracking-[0.35em] uppercase sm:text-[9px]`}>
+                          {item.tag}
+                        </span>
+                        <span className="shrink-0 text-[8px] tracking-[0.28em] uppercase text-white/55 tabular-nums sm:text-[9px]">
+                          {item.year}
+                        </span>
+                      </div>
+                      <div className="flex items-end justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <h3 className="line-clamp-2 min-h-[2.4rem] text-sm font-black uppercase leading-[1.15] tracking-tight text-white sm:min-h-[2.65rem] sm:text-base md:min-h-[2.9rem] md:text-lg">
+                            {item.title}
+                          </h3>
+                          <p className="mt-1.5 line-clamp-2 min-h-[2.25rem] text-xs leading-snug text-white/70 transition-colors duration-300 group-hover:text-white/85 sm:min-h-[2.5rem] sm:text-sm">
+                            {item.subtitle}
+                          </p>
+                        </div>
+                        <span className="mb-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/[0.04] text-white/60 transition-all duration-300 group-hover:border-white/30 group-hover:bg-white/[0.08] group-hover:text-white" aria-hidden>
+                          <ArrowUpRight className="h-4 w-4" strokeWidth={2} />
+                        </span>
+                      </div>
+                    </div>
+                  </motion.article>
+                </Link>
               </motion.div>
             ))}
+          </AnimatePresence>
+        </motion.div>
+      </motion.section>
 
-          </motion.div>
-        </section>
-      </main>
-    </motion.div>
+    </PageContainer>
   );
 };
+
+function CaseStudyCardMedia({ src, alt }: { src: string; alt: string }) {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  return (
+    <div className="relative w-full aspect-[4/3]">
+      {!isLoaded && (
+        <div className="absolute inset-0 animate-pulse bg-white/[0.06]" />
+      )}
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        unoptimized
+        loading="eager"
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        onLoadingComplete={() => setIsLoaded(true)}
+        className={`object-cover transition-[transform,opacity] duration-700 ease-out group-hover:scale-[1.03] ${
+          isLoaded ? "opacity-100" : "opacity-0"
+        }`}
+      />
+    </div>
+  );
+}
 
 export default CaseStudiesPage;
